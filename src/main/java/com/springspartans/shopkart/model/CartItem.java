@@ -33,18 +33,27 @@ public class CartItem {
 	@Column(nullable = false)
 	private int quantity;
 	
-	@Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+	@Column(nullable = false)
 	private Timestamp addedDate = Timestamp.from(Instant.now());
 	
 	public CartItem() {
 	}
 
-	public CartItem(int slno, Customer customer, Product product, int quantity, Timestamp orderDate) {
-		this.slno = slno;
+	public CartItem(Customer customer, Product product, int quantity) {
+
+		if (customer == null)
+			throw new IllegalArgumentException("Customer cannot be null");
+
+		if (product == null)
+			throw new IllegalArgumentException("Product cannot be null");
+
+		if (quantity <= 0)
+			throw new IllegalArgumentException("Quantity  must be positive");
+
 		this.customer = customer;
 		this.product = product;
 		this.quantity = quantity;
-		this.addedDate = orderDate;
+		this.addedDate = Timestamp.from(Instant.now());
 	}
 
 	public int getSlno() {
@@ -91,5 +100,4 @@ public class CartItem {
 		return "CartItem [slno=" + slno + ", customer=" + customer + ", product=" + product + ", quantity=" + quantity
 				+ ", addedDate=" + addedDate + "]";
 	}
-		
 }
