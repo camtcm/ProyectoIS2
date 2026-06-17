@@ -11,19 +11,25 @@ import jakarta.servlet.http.HttpSession;
 
 @Service
 public class AdminService {
-	
-	@Autowired
-    private AdminRepository adminRepository;
-    
-    @Autowired
-    private HttpSession httpSession;
-    
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
-    public boolean login(String email, String password , String security_key) {
+    private final AdminRepository adminRepository;
+    private final HttpSession httpSession;
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public AdminService(AdminRepository adminRepository,
+                        HttpSession httpSession,
+                        PasswordEncoder passwordEncoder) {
+        this.adminRepository = adminRepository;
+        this.httpSession = httpSession;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public boolean login(String email, String password, String security_key) {
         Optional<Admin> admin = adminRepository.findByEmail(email);
-        if (admin.isPresent() && passwordEncoder.matches(password, admin.get().getPassword()) && security_key.equals(admin.get().getSecurity_key())) {
+        if (admin.isPresent()
+                && passwordEncoder.matches(password, admin.get().getPassword())
+                && security_key.equals(admin.get().getSecurity_key())) {
             httpSession.setAttribute("loggedInAdmin", admin.get());
             return true;
         }
@@ -33,6 +39,7 @@ public class AdminService {
     public void logout() {
         httpSession.invalidate();
     }
+
     public Admin getAdmin() {
         return (Admin) httpSession.getAttribute("loggedInAdmin");
     }
