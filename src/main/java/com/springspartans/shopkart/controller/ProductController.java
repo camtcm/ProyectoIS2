@@ -21,22 +21,27 @@ import com.springspartans.shopkart.service.ProductService;
 @RequestMapping("/product")
 public class ProductController {
 
+	private static final String PRODUCT_LIST = "productList";
+	private static final String CATEGORY_LIST = "categoryList";
+	private static final String CUSTOMER = "customer";
+	private static final String PRODUCT_HOME = "product/home";
+
 	@Autowired
 	private ProductService productService;
 	@Autowired
-	private CustomerService customerService; 
-	
+	private CustomerService customerService;
+
 	@GetMapping
 	public String getAllProducts(Model model) {
 		List<Product> productList = productService.getAllProducts();
-		model.addAttribute("productList", productList);
+		model.addAttribute(PRODUCT_LIST, productList);
 		List<String> categoryList = productService.getAllCategories();
-		model.addAttribute("categoryList", categoryList);
+		model.addAttribute(CATEGORY_LIST, categoryList);
 		Customer customer = customerService.getCustomer();
-        model.addAttribute("customer", customer);
-		return "product/home";
+        model.addAttribute(CUSTOMER, customer);
+		return PRODUCT_HOME;
 	}
-	
+
 	@GetMapping("/{id}")
 	public String getProductById(@PathVariable int id, Model model) {
 		Product product = productService.getProductById(id);
@@ -45,12 +50,12 @@ public class ProductController {
         }
 		model.addAttribute("product", product);
 		List<String> categoryList = productService.getAllCategories();
-		model.addAttribute("categoryList", categoryList);
+		model.addAttribute(CATEGORY_LIST, categoryList);
 		Customer customer = customerService.getCustomer();
-        model.addAttribute("customer", customer);
+        model.addAttribute(CUSTOMER, customer);
 		return "product/details";
 	}
-	
+
 	@GetMapping("/category/{category}")
 	public String getProductsByCategory(@PathVariable String category, Model model) {
 		if (category == null) {
@@ -60,27 +65,27 @@ public class ProductController {
 		if (productList == null || productList.isEmpty()) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 		}
-		model.addAttribute("productList", productList);
-		model.addAttribute("category", category);		
+		model.addAttribute(PRODUCT_LIST, productList);
+		model.addAttribute("category", category);
 		List<String> categoryList = productService.getAllCategories();
-		model.addAttribute("categoryList", categoryList);
+		model.addAttribute(CATEGORY_LIST, categoryList);
 		Customer customer = customerService.getCustomer();
-        model.addAttribute("customer", customer);
-		return "product/home";
+        model.addAttribute(CUSTOMER, customer);
+		return PRODUCT_HOME;
 	}
-	
+
 	@GetMapping("/search")
 	public String getProductsByStartName(@RequestParam String prefix, Model model) {
 		if (prefix == null) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 		}
 		List<Product> productList = productService.getProductsByStartName(prefix);
-		model.addAttribute("productList", productList);
+		model.addAttribute(PRODUCT_LIST, productList);
 		List<String> categoryList = productService.getAllCategories();
-		model.addAttribute("categoryList", categoryList);
+		model.addAttribute(CATEGORY_LIST, categoryList);
 		Customer customer = customerService.getCustomer();
-        model.addAttribute("customer", customer);
-		return "product/home";
+        model.addAttribute(CUSTOMER, customer);
+		return PRODUCT_HOME;
 	}
 	
 }
