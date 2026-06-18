@@ -18,12 +18,15 @@ import com.springspartans.shopkart.util.PasswordEncoder;
 import com.springspartans.shopkart.util.PasswordValidator;
 
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class CustomerService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomerService.class);
     private static final String LOGGED_IN_CUSTOMER_ATTRIBUTE = "loggedInCustomer";
 
     private final String uploadPath;
@@ -69,7 +72,7 @@ public class CustomerService {
             throw new InvalidPasswordException("Invalid password entered!");
         }
         customer.setSignupDate(Timestamp.from(Instant.now()));
-        System.out.println("Signup Date: " + customer.getSignupDate());
+        LOGGER.info("Signup Date: {}", customer.getSignupDate());
         customer.setPassword(passwordEncoder.encode(customer.getPassword()));
         customerRepository.save(customer);
         return true;
@@ -122,15 +125,15 @@ public class CustomerService {
                     destination.setWritable(true);
 
                     if (created) {
-                        System.out.println("Created directory : " + destination.getAbsolutePath());
+                        LOGGER.info("Created directory: {}", destination.getAbsolutePath());
                     } else {
-                        System.out.println(destination.getAbsolutePath() + "already exists");
+                        LOGGER.info("{} already exists", destination.getAbsolutePath());
                     }
                 }
 
                 File fileToSave = new File(destination, profilePictureName);
                 profilePicture.transferTo(fileToSave);
-                System.out.println("Saved file : " + fileToSave.getAbsolutePath());
+                LOGGER.info("Saved file: {}", fileToSave.getAbsolutePath());
             } else if (profilePicture != null && !profilePicture.isEmpty()) {
                 throw new InvalidImageUploadException("Improper file format!");
             }
