@@ -93,8 +93,7 @@ public class ProductService {
 	}
 	
 	private void saveImageToDirectory(MultipartFile image, String imageName, String folderName) throws IOException {
-	    String imageUploadPath = uploadPath + "/" + folderName;
-	    File destination = new File(imageUploadPath);
+	    File destination = new File(uploadPath, folderName);
 	    if (!destination.exists()) {
 	        boolean created = destination.mkdirs(); 
 	        destination.setWritable(true);
