@@ -97,9 +97,10 @@ public class CustomerService {
                     ? loggedInCustomer.getPassword()
                     : passwordEncoder.encode(newPassword);
 
-            String profilePictureName = (profilePicture != null && !profilePicture.isEmpty())
-                    ? "user" + loggedInCustomer.getId() + ".jpg"
-                    : null;
+            String profilePictureName = null;
+            if (profilePicture != null && !profilePicture.isEmpty()) {
+                profilePictureName = "user" + loggedInCustomer.getId() + ".jpg";
+            }
 
             Customer updatedCustomer = Customer.builder()
                     .id(loggedInCustomer.getId())
@@ -116,26 +117,26 @@ public class CustomerService {
             customerRepository.save(updatedCustomer);
             httpSession.setAttribute(LOGGED_IN_CUSTOMER_ATTRIBUTE, updatedCustomer);
 
-            if (imageUploadValidator.isValidImage(profilePicture)) {
+            if (profilePicture != null && !profilePicture.isEmpty()) {
+                if (!imageUploadValidator.isValidImage(profilePicture)) {
+                    throw new InvalidImageUploadException("Improper file format!");
+                }
+
                 String customerUploadPath = uploadPath + "/customer";
                 File destination = new File(customerUploadPath);
 
-                if (!destination.exists()) {
-                    boolean created = destination.mkdirs();
-                    destination.setWritable(true);
+                if (!destination.exists() && !destination.mkdirs()) {
+                    throw new IOException("Could not create upload directory: " + destination.getAbsolutePath());
+                }
 
-                    if (created) {
-                        LOGGER.info("Created directory: {}", destination.getAbsolutePath());
-                    } else {
-                        LOGGER.info("{} already exists", destination.getAbsolutePath());
-                    }
+                boolean writable = destination.setWritable(true);
+                if (!writable) {
+                    LOGGER.warn("Could not set writable permission for directory: {}", destination.getAbsolutePath());
                 }
 
                 File fileToSave = new File(destination, profilePictureName);
                 profilePicture.transferTo(fileToSave);
                 LOGGER.info("Saved file: {}", fileToSave.getAbsolutePath());
-            } else if (profilePicture != null && !profilePicture.isEmpty()) {
-                throw new InvalidImageUploadException("Improper file format!");
             }
 
             return true;
