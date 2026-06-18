@@ -24,6 +24,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class CustomerService {
 
+    private static final String LOGGED_IN_CUSTOMER_ATTRIBUTE = "loggedInCustomer";
+
     private final String uploadPath;
     private final CustomerRepository customerRepository;
     private final HttpSession httpSession;
@@ -53,7 +55,7 @@ public class CustomerService {
             Customer loggedInCustomer = customer.get();
             loggedInCustomer.setLastLoginDate(Timestamp.from(Instant.now()));
             customerRepository.save(loggedInCustomer);
-            httpSession.setAttribute("loggedInCustomer", loggedInCustomer);
+            httpSession.setAttribute(LOGGED_IN_CUSTOMER_ATTRIBUTE, loggedInCustomer);
             return true;
         }
         return false;
@@ -74,14 +76,14 @@ public class CustomerService {
     }
 
     public Customer getCustomer() {
-        return (Customer) httpSession.getAttribute("loggedInCustomer");
+        return (Customer) httpSession.getAttribute(LOGGED_IN_CUSTOMER_ATTRIBUTE);
     }
 
     public boolean updateCustomer(
             String newName, long newPhone, String newAddress,
             String newPassword, String oldPassword, MultipartFile profilePicture
     ) throws IOException, InvalidPasswordException, InvalidImageUploadException {
-        Customer loggedInCustomer = (Customer) httpSession.getAttribute("loggedInCustomer");
+        Customer loggedInCustomer = (Customer) httpSession.getAttribute(LOGGED_IN_CUSTOMER_ATTRIBUTE);
 
         if (loggedInCustomer != null && passwordEncoder.matches(oldPassword, loggedInCustomer.getPassword())) {
             if (!newPassword.isEmpty() && !passwordValidator.isValidPassword(newPassword)) {
@@ -109,7 +111,7 @@ public class CustomerService {
                     .build();
 
             customerRepository.save(updatedCustomer);
-            httpSession.setAttribute("loggedInCustomer", updatedCustomer);
+            httpSession.setAttribute(LOGGED_IN_CUSTOMER_ATTRIBUTE, updatedCustomer);
 
             if (imageUploadValidator.isValidImage(profilePicture)) {
                 String customerUploadPath = uploadPath + "/customer";
