@@ -96,7 +96,10 @@ public class ProductService {
 	    File destination = new File(uploadPath, folderName);
 	    if (!destination.exists()) {
 	        boolean created = destination.mkdirs(); 
-	        destination.setWritable(true);
+	        boolean writable = destination.setWritable(true);
+        if (!writable) {
+            logger.warn("Could not set directory as writable: {}", destination.getAbsolutePath());
+        }
 	        if (created) {
         		logger.info("Created directory : {}", destination.getAbsolutePath());
         	} else {
