@@ -40,7 +40,6 @@ class CustomerRepositoryTest {
 
     @Test
     void shouldFindCustomerByEmail() {
-        // Arrange
         Customer customer = new Customer();
         customer.setName("Juan Perez");
         customer.setEmail("juan@gmail.com");
@@ -51,10 +50,8 @@ class CustomerRepositoryTest {
 
         customerRepository.saveAndFlush(customer);
 
-        // Act
         Optional<Customer> result = customerRepository.findByEmail("juan@gmail.com");
 
-        // Assert
         assertTrue(result.isPresent());
         assertEquals("Juan Perez", result.get().getName());
         assertEquals("juan@gmail.com", result.get().getEmail());
@@ -62,7 +59,6 @@ class CustomerRepositoryTest {
 
     @Test
     void shouldCountCustomersBySignupDateBetween() {
-        // Arrange
         Timestamp signupDate = Timestamp.from(Instant.now());
 
         Customer customer = new Customer();
@@ -71,23 +67,20 @@ class CustomerRepositoryTest {
         customer.setPassword("abcdef");
         customer.setAddress("Lima");
         customer.setPhone(912345678L);
-        customer.setSignup_date(signupDate);
+        customer.setSignupDate(signupDate);
 
         customerRepository.saveAndFlush(customer);
 
         Timestamp startDate = Timestamp.from(Instant.now().minusSeconds(3600));
         Timestamp endDate = Timestamp.from(Instant.now().plusSeconds(3600));
 
-        // Act
-        int total = customerRepository.countBySignup_dateBetween(startDate, endDate);
+        int total = customerRepository.countBySignupDateBetween(startDate, endDate);
 
-        // Assert
         assertEquals(1, total);
     }
 
     @Test
     void shouldCountCustomersByLastLoginDateBetween() {
-        // Arrange
         Timestamp signupDate = Timestamp.from(Instant.now());
         Timestamp lastLoginDate = Timestamp.from(Instant.now());
 
@@ -97,18 +90,16 @@ class CustomerRepositoryTest {
         customer.setPassword("123abc");
         customer.setAddress("Cusco");
         customer.setPhone(923456789L);
-        customer.setSignup_date(signupDate);
-        customer.setLast_login_date(lastLoginDate);
+        customer.setSignupDate(signupDate);
+        customer.setLastLoginDate(lastLoginDate);
 
         customerRepository.saveAndFlush(customer);
 
         Timestamp startDate = Timestamp.from(Instant.now().minusSeconds(3600));
         Timestamp endDate = Timestamp.from(Instant.now().plusSeconds(3600));
 
-        // Act
-        int total = customerRepository.countByLast_login_dateBetween(startDate, endDate);
+        int total = customerRepository.countByLastLoginDateBetween(startDate, endDate);
 
-        // Assert
         assertEquals(1, total);
     }
 }

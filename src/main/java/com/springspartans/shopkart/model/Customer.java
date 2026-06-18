@@ -21,59 +21,105 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "customer")
 public class Customer {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id; 
-    
+    private int id;
+
     @Column(nullable = false, length = 50)
     private String name;
-    
+
     @Column(nullable = false, unique = true, length = 50)
     private String email;
-    
+
     @Column(nullable = false, length = 72)
     private String password;
-    
+
     @Column(nullable = false)
     private String address;
-    
+
     @Column(nullable = false)
     private Long phone;
-    
+
     @Column(length = 50)
     private String profilePic;
-    
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private Timestamp signup_date = Timestamp.from(Instant.now());
-    
-    @Column(columnDefinition = "TIMESTAMP DEFAULT NULL")
-    private Timestamp last_login_date;
-    
+
+    @Column(name = "signup_date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private Timestamp signupDate = Timestamp.from(Instant.now());
+
+    @Column(name = "last_login_date", columnDefinition = "TIMESTAMP DEFAULT NULL")
+    private Timestamp lastLoginDate;
+
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<CartItem> cartItems = new ArrayList<>();
-    
+
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Order> orders = new ArrayList<>();
-    
+
     public Customer() {
+        // Required by JPA.
     }
 
-    public Customer(int id, String name, String email, String password, String address, Long phone, String profilePic,
-            Timestamp signup_date, Timestamp last_login_date) {
-        this.id = id;
-        setName(name);
-        setEmail(email);
-        setPassword(password);
-        setAddress(address);
-        setPhone(phone);
-        setProfilePic(profilePic);
-        setSignup_date(signup_date);
-        this.last_login_date = last_login_date;
+    public static CustomerBuilder builder() {
+        return new CustomerBuilder();
     }
-    
+
+    public static class CustomerBuilder {
+
+        private final Customer customer = new Customer();
+
+        public CustomerBuilder id(int id) {
+            customer.setId(id);
+            return this;
+        }
+
+        public CustomerBuilder name(String name) {
+            customer.setName(name);
+            return this;
+        }
+
+        public CustomerBuilder email(String email) {
+            customer.setEmail(email);
+            return this;
+        }
+
+        public CustomerBuilder password(String password) {
+            customer.setPassword(password);
+            return this;
+        }
+
+        public CustomerBuilder address(String address) {
+            customer.setAddress(address);
+            return this;
+        }
+
+        public CustomerBuilder phone(Long phone) {
+            customer.setPhone(phone);
+            return this;
+        }
+
+        public CustomerBuilder profilePic(String profilePic) {
+            customer.setProfilePic(profilePic);
+            return this;
+        }
+
+        public CustomerBuilder signupDate(Timestamp signupDate) {
+            customer.setSignupDate(signupDate);
+            return this;
+        }
+
+        public CustomerBuilder lastLoginDate(Timestamp lastLoginDate) {
+            customer.setLastLoginDate(lastLoginDate);
+            return this;
+        }
+
+        public Customer build() {
+            return customer;
+        }
+    }
+
     public int getId() {
         return id;
     }
@@ -145,30 +191,46 @@ public class Customer {
         this.profilePic = profilePic;
     }
 
-    public Timestamp getSignup_date() {
-        return signup_date;
+    public Timestamp getSignupDate() {
+        return signupDate;
     }
 
-    public void setSignup_date(Timestamp signup_date) {
-        if (signup_date == null) {
-            this.signup_date = Timestamp.from(Instant.now());
+    public void setSignupDate(Timestamp signupDate) {
+        if (signupDate == null) {
+            this.signupDate = Timestamp.from(Instant.now());
         } else {
-            this.signup_date = signup_date;
+            this.signupDate = signupDate;
         }
     }
 
-    public Timestamp getLast_login_date() {
-        return last_login_date;
+    public Timestamp getLastLoginDate() {
+        return lastLoginDate;
     }
 
-    public void setLast_login_date(Timestamp last_login_date) {
-        this.last_login_date = last_login_date;
+    public void setLastLoginDate(Timestamp lastLoginDate) {
+        this.lastLoginDate = lastLoginDate;
+    }
+
+    public List<CartItem> getCartItems() {
+        return cartItems;
+    }
+
+    public void setCartItems(List<CartItem> cartItems) {
+        this.cartItems = cartItems;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
     }
 
     @Override
     public String toString() {
-        return "Customer [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", address="
-                + address + ", phone=" + phone + ", profilePic=" + profilePic + ", signup_date=" + signup_date
-                + ", last_login_date=" + last_login_date + "]";
+        return "Customer [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password
+                + ", address=" + address + ", phone=" + phone + ", profilePic=" + profilePic
+                + ", signupDate=" + signupDate + ", lastLoginDate=" + lastLoginDate + "]";
     }
 }
