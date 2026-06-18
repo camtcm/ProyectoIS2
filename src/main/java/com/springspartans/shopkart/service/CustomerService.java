@@ -92,61 +92,126 @@ public class CustomerService {
     ) throws IOException, InvalidPasswordException, InvalidImageUploadException {
         Customer loggedInCustomer = getCustomer();
 
-        if (loggedInCustomer != null && passwordEncoder.matches(oldPassword, loggedInCustomer.getPassword())) {
-            if (!newPassword.isEmpty() && !passwordValidator.isValidPassword(newPassword)) {
-                throw new InvalidPasswordException("Invalid password entered!");
-            }
-
-            String encodedPassword = newPassword.isEmpty()
-                    ? loggedInCustomer.getPassword()
-                    : passwordEncoder.encode(newPassword);
-
-            String profilePictureName = null;
-            if (profilePicture != null && !profilePicture.isEmpty()) {
-                profilePictureName = "user" + loggedInCustomer.getId() + ".jpg";
-            }
-
-            Customer updatedCustomer = Customer.builder()
-                    .id(loggedInCustomer.getId())
-                    .name(newName)
-                    .email(loggedInCustomer.getEmail())
-                    .password(encodedPassword)
-                    .address(newAddress)
-                    .phone(newPhone)
-                    .profilePic(profilePictureName)
-                    .signupDate(loggedInCustomer.getSignupDate())
-                    .lastLoginDate(loggedInCustomer.getLastLoginDate())
-                    .build();
-
-            customerRepository.save(updatedCustomer);
-            httpSession.setAttribute(LOGGED_IN_CUSTOMER_ID_ATTRIBUTE, updatedCustomer.getId());
-
-            if (profilePicture != null && !profilePicture.isEmpty()) {
-                if (!imageUploadValidator.isValidImage(profilePicture)) {
-                    throw new InvalidImageUploadException("Improper file format!");
-                }
-
-                String customerUploadPath = uploadPath + "/customer";
-                File destination = new File(customerUploadPath);
-
-                if (!destination.exists() && !destination.mkdirs()) {
-                    throw new IOException("Could not create upload directory: " + destination.getAbsolutePath());
-                }
-
-                boolean writable = destination.setWritable(true);
-                if (!writable) {
-                    LOGGER.warn("Could not set writable permission for directory: {}", destination.getAbsolutePath());
-                }
-
-                File fileToSave = new File(destination, profilePictureName);
-                profilePicture.transferTo(fileToSave);
-                LOGGER.info("Saved file: {}", fileToSave.getAbsolutePath());
-            }
-
-            return true;
+        if (!canUpdateCustomer(loggedInCustomer, oldPassword)) {
+            return false;
         }
 
-        return false;
+        validateNewPassword(newPassword);
+
+        String encodedPassword = resolvePassword(newPassword, loggedInCustomer);
+        String profilePictureName = resolveProfilePictureName(loggedInCustomer, profilePicture);
+
+        Customer updatedCustomer = buildUpdatedCustomer(
+                loggedInCustomer,
+                newName,
+                newPhone,
+                newAddress,
+                encodedPassword,
+                profilePictureName
+        );
+
+        customerRepository.save(updatedCustomer);
+        httpSession.setAttribute(LOGGED_IN_CUSTOMER_ID_ATTRIBUTE, updatedCustomer.getId());
+
+        saveProfilePictureIfPresent(profilePicture, profilePictureName);
+
+        return true;
+    }
+
+    private boolean canUpdateCustomer(Customer loggedInCustomer, String oldPassword) {
+        return loggedInCustomer != null && passwordEncoder.matches(oldPassword, loggedInCustomer.getPassword());
+    }
+
+    private void validateNewPassword(String newPassword) throws InvalidPasswordException {
+        if (!isEmpty(newPassword) && !passwordValidator.isValidPassword(newPassword)) {
+            throw new InvalidPasswordException("Invalid password entered!");
+        }
+    }
+
+    private String resolvePassword(String newPassword, Customer loggedInCustomer) {
+        if (isEmpty(newPassword)) {
+            return loggedInCustomer.getPassword();
+        }
+        return passwordEncoder.encode(newPassword);
+    }
+
+    private String resolveProfilePictureName(Customer loggedInCustomer, MultipartFile profilePicture) {
+        if (!hasProfilePicture(profilePicture)) {
+            return null;
+        }
+        return "user" + loggedInCustomer.getId() + ".jpg";
+    }
+
+    private Customer buildUpdatedCustomer(
+            Customer loggedInCustomer,
+            String newName,
+            long newPhone,
+            String newAddress,
+            String encodedPassword,
+            String profilePictureName
+    ) {
+        return Customer.builder()
+                .id(loggedInCustomer.getId())
+                .name(newName)
+                .email(loggedInCustomer.getEmail())
+                .password(encodedPassword)
+                .address(newAddress)
+                .phone(newPhone)
+                .profilePic(profilePictureName)
+                .signupDate(loggedInCustomer.getSignupDate())
+                .lastLoginDate(loggedInCustomer.getLastLoginDate())
+                .build();
+    }
+
+    private void saveProfilePictureIfPresent(MultipartFile profilePicture, String profilePictureName)
+            throws IOException, InvalidImageUploadException {
+        if (!hasProfilePicture(profilePicture)) {
+            return;
+        }
+
+        validateProfilePicture(profilePicture);
+
+        File destination = getCustomerUploadDirectory();
+        File fileToSave = new File(destination, profilePictureName);
+
+        profilePicture.transferTo(fileToSave);
+        LOGGER.info("Saved file: {}", fileToSave.getAbsolutePath());
+    }
+
+    private void validateProfilePicture(MultipartFile profilePicture) throws InvalidImageUploadException {
+        if (!imageUploadValidator.isValidImage(profilePicture)) {
+            throw new InvalidImageUploadException("Improper file format!");
+        }
+    }
+
+    private File getCustomerUploadDirectory() throws IOException {
+        File destination = new File(uploadPath + "/customer");
+
+        createDirectoryIfNeeded(destination);
+        makeDirectoryWritable(destination);
+
+        return destination;
+    }
+
+    private void createDirectoryIfNeeded(File destination) throws IOException {
+        if (!destination.exists() && !destination.mkdirs()) {
+            throw new IOException("Could not create upload directory: " + destination.getAbsolutePath());
+        }
+    }
+
+    private void makeDirectoryWritable(File destination) {
+        boolean writable = destination.setWritable(true);
+        if (!writable) {
+            LOGGER.warn("Could not set writable permission for directory: {}", destination.getAbsolutePath());
+        }
+    }
+
+    private boolean hasProfilePicture(MultipartFile profilePicture) {
+        return profilePicture != null && !profilePicture.isEmpty();
+    }
+
+    private boolean isEmpty(String value) {
+        return value == null || value.isEmpty();
     }
 
     public List<Customer> getAllCustomers() {
