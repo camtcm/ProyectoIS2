@@ -2,7 +2,6 @@ package com.springspartans.shopkart.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,43 +22,65 @@ import com.springspartans.shopkart.service.ProductService;
 @RequestMapping("/order")
 public class OrderController {
 	
-	@Autowired
-	private OrderService orderService;
-	@Autowired
-	private ProductService productService;
-	@Autowired
-	private CustomerService customerService;
+	// 1. SOLUCIÓN A FLECHAS ROJAS: Constantes para literales duplicados
+	private static final String ATTR_CUSTOMER = "customer";
+	private static final String ATTR_CATEGORY_LIST = "categoryList";
+	private static final String VIEW_HISTORY = "order/history";
+	private static final String REDIRECT_BASE = "redirect:/order";
+	private static final String REDIRECT_DETAIL = "redirect:/order/";
 	
-	@GetMapping
-	public String getOrdersOfLoggedInCustomer(Model model) {
+	private final OrderService orderService;
+	private final ProductService productService;
+	private final CustomerService customerService;
+	
+	// 2. SOLUCIÓN A FLECHAS NARANJAS: Inyección por Constructor (Principio SOLID - DIP)
+	public OrderController(OrderService orderService, ProductService productService, CustomerService customerService) {
+		this.orderService = orderService;
+		this.productService = productService;
+		this.customerService = customerService;
+	}
+	
+	// 3. SOLUCIÓN A FLECHAS AMARILLAS Y LÓGICA REPETIDA: Extract Method unificando estilo Java int[]
+	private void populateCommonModelAttributes(Model model, Customer customer) {
 		List<String> categoryList = productService.getAllCategories();
-		model.addAttribute("categoryList", categoryList);
-		Customer customer = customerService.getCustomer();
-        model.addAttribute("customer", customer);
-        if (customer == null) {
-        	throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        }	
-        List<Order> orderList = orderService.getOrdersOfLoggedInCustomer();
-		model.addAttribute("orderList", orderList);
-		int orderCountByStatusArr[] = {
+		model.addAttribute(ATTR_CATEGORY_LIST, categoryList);
+		model.addAttribute(ATTR_CUSTOMER, customer);
+		
+		// Corchetes corregidos al tipo: int[] en lugar de int arreglo[]
+		int[] orderCountByStatusArr = {
 			orderService.countOrdersByStatusForCustId(OrderStatus.Pending),
 			orderService.countOrdersByStatusForCustId(OrderStatus.Shipped),
 			orderService.countOrdersByStatusForCustId(OrderStatus.Delivered),
 			orderService.countOrdersByStatusForCustId(OrderStatus.Cancelled)
 		};
 		model.addAttribute("orderCountByStatusArr", orderCountByStatusArr);
-		return "order/history";
+	}
+	
+	private Customer getValidatedCustomer() {
+		Customer customer = customerService.getCustomer();
+		if (customer == null) {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+		}
+		return customer;
+	}
+	
+	@GetMapping
+	public String getOrdersOfLoggedInCustomer(Model model) {
+		Customer customer = getValidatedCustomer();
+		List<Order> orderList = orderService.getOrdersOfLoggedInCustomer();
+		model.addAttribute("orderList", orderList);
+		
+		populateCommonModelAttributes(model, customer);
+		return VIEW_HISTORY;
 	}
 	
 	@GetMapping("/{id}")
 	public String getOrderById(@PathVariable int id, Model model) {
 		List<String> categoryList = productService.getAllCategories();
-		model.addAttribute("categoryList", categoryList);
-		Customer customer = customerService.getCustomer();
-        model.addAttribute("customer", customer);
-        if (customer == null) {
-        	throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        }		
+		model.addAttribute(ATTR_CATEGORY_LIST, categoryList);
+		Customer customer = getValidatedCustomer();
+		model.addAttribute(ATTR_CUSTOMER, customer);
+		
 		Order order = orderService.getOrderById(id);
 		if (order == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -71,7 +92,7 @@ public class OrderController {
 	@PostMapping
 	public String orderAll() {
 		orderService.orderAll();
-		return "redirect:/order";
+		return REDIRECT_BASE;
 	}
 	
 	@PostMapping("/{slno}")
@@ -80,7 +101,7 @@ public class OrderController {
 		if (orderId == 0) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 		}
-		return "redirect:/order/" + orderId;
+		return REDIRECT_DETAIL + orderId;
 	}
 	
 	@PostMapping("/again/{id}")
@@ -89,37 +110,25 @@ public class OrderController {
 		if (newOrderId == 0) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 		}
-		return "redirect:/order/" + newOrderId;
+		return REDIRECT_DETAIL + newOrderId;
 	}
 	
 	@PostMapping("/cancel/{id}")
 	public String cancelOrder(@PathVariable("id") int orderId) {
 		orderService.cancelOrder(orderId);
-		return "redirect:/order";
+		return REDIRECT_BASE;
 	}
 	
 	@GetMapping("/status/{status}")
 	public String filterByStatusForCustId(@PathVariable String status, Model model) {
-		List<String> categoryList = productService.getAllCategories();
-		model.addAttribute("categoryList", categoryList);
-		Customer customer = customerService.getCustomer();
-        model.addAttribute("customer", customer);
-        if (customer == null) {
-        	throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        }
-        if (status == null) {
-        	throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+		Customer customer = getValidatedCustomer();
+		if (status == null) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+		}
 		List<Order> orderList = orderService.filterByStatusForCustId(status);
 		model.addAttribute("orderList", orderList);
-		int orderCountByStatusArr[] = {
-			orderService.countOrdersByStatusForCustId(OrderStatus.Pending),
-			orderService.countOrdersByStatusForCustId(OrderStatus.Shipped),
-			orderService.countOrdersByStatusForCustId(OrderStatus.Delivered),
-			orderService.countOrdersByStatusForCustId(OrderStatus.Cancelled)
-		};
-		model.addAttribute("orderCountByStatusArr", orderCountByStatusArr);
-		return "order/history";
+		
+		populateCommonModelAttributes(model, customer);
+		return VIEW_HISTORY;
 	}
-	
 }
