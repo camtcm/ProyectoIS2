@@ -56,42 +56,34 @@ public class Product {
     public Product() {
     }
 
-    public Product(int id, String name, String category, String brand, double price, String image, int stock,
-    double discount) {
-
-        // Validación DDD (fail-fast)
-        if (name == null || name.trim().isEmpty()) {
+    public Product(int id, ProductDetails details) {
+        if (details.getName() == null || details.getName().trim().isEmpty()) {
             throw new IllegalArgumentException("Name cannot be null or empty");
         }
-
-        if (category == null || category.trim().isEmpty()) {
+        if (details.getCategory() == null || details.getCategory().trim().isEmpty()) {
             throw new IllegalArgumentException("Category cannot be null or empty");
         }
-
-        if (brand == null || brand.trim().isEmpty()) {
+        if (details.getBrand() == null || details.getBrand().trim().isEmpty()) {
             throw new IllegalArgumentException("Brand cannot be null or empty");
         }
-
-        if (price <= 0) {
+        if (details.getPrice() <= 0) {
             throw new IllegalArgumentException("Price must be positive");
         }
-
-        if (stock < 0) {
+        if (details.getStock() < 0) {
             throw new IllegalArgumentException("Stock cannot be negative");
         }
-
-        if (discount < 0) {
+        if (details.getDiscount() < 0) {
             throw new IllegalArgumentException("Discount cannot be negative");
         }
 
         this.id = id;
-        this.name = name;
-        this.category = category;
-        this.brand = brand;
-        this.price = price;
-        this.image = image;
-        this.stock = stock;
-        this.discount = discount;
+        this.name = details.getName();
+        this.category = details.getCategory();
+        this.brand = details.getBrand();
+        this.price = details.getPrice();
+        this.image = details.getImage();
+        this.stock = details.getStock();
+        this.discount = details.getDiscount();
     }
 
 	public int getId() {

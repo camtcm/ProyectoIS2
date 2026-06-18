@@ -5,18 +5,23 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.springspartans.shopkart.exception.InvalidImageUploadException;
 import com.springspartans.shopkart.model.Product;
+import com.springspartans.shopkart.model.ProductDetails;
 import com.springspartans.shopkart.repository.ProductRepository;
 import com.springspartans.shopkart.util.ImageUploadValidator;
 
 @Service
 public class ProductService {
-	
+
+	private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
+
 	@Autowired
 	private String uploadPath;
 	
@@ -60,7 +65,7 @@ public class ProductService {
 	        }
 	        imageName = image.getOriginalFilename();
 	    }
-		Product product = new Product(id, name, category, brand, price, imageName, stock, discount);
+		Product product = new Product(id, new ProductDetails(name, category, brand, price, imageName, stock, discount));
 		productRepository.save(product);
 		if (imageName != null)
 			saveImageToDirectory(image, imageName, "product");
@@ -88,20 +93,22 @@ public class ProductService {
 	}
 	
 	private void saveImageToDirectory(MultipartFile image, String imageName, String folderName) throws IOException {
-	    String imageUploadPath = uploadPath + "/product" ;
-	    File destination = new File(imageUploadPath);
+	    File destination = new File(uploadPath, folderName);
 	    if (!destination.exists()) {
 	        boolean created = destination.mkdirs(); 
-	        destination.setWritable(true);
+	        boolean writable = destination.setWritable(true);
+        if (!writable) {
+            logger.warn("Could not set directory as writable: {}", destination.getAbsolutePath());
+        }
 	        if (created) {
-        		System.out.println("Created directory : " + destination.getAbsolutePath());
+        		logger.info("Created directory : {}", destination.getAbsolutePath());
         	} else {
-        		System.out.println(destination.getAbsolutePath() + "already exists");
+        		logger.info("{} already exists", destination.getAbsolutePath());
         	}
 	    }
 	    File fileToSave = new File(destination, imageName);
 	    image.transferTo(fileToSave);
-	    System.out.println("Saved file : " + fileToSave.getAbsolutePath());
+	    logger.info("Saved file : {}", fileToSave.getAbsolutePath());
 	}
 
 	public void deleteProduct(int id) {

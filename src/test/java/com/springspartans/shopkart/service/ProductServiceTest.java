@@ -2,6 +2,7 @@ package com.springspartans.shopkart.service;
 
 import com.springspartans.shopkart.exception.InvalidImageUploadException;
 import com.springspartans.shopkart.model.Product;
+import com.springspartans.shopkart.model.ProductDetails;
 import com.springspartans.shopkart.repository.ProductRepository;
 import com.springspartans.shopkart.util.ImageUploadValidator;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,8 +45,8 @@ class ProductServiceTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        product1 = new Product(1, "Laptop", "Electronics", "Dell", 999.99, "laptop.jpg", 10, 5.0);
-        product2 = new Product(2, "Smartphone", "Electronics", "Apple", 799.99, "phone.jpg", 20, 10.0);
+        product1 = new Product(1, new ProductDetails("Laptop", "Electronics", "Dell", 999.99, "laptop.jpg", 10, 5.0));
+        product2 = new Product(2, new ProductDetails("Smartphone", "Electronics", "Apple", 799.99, "phone.jpg", 20, 10.0));
 
         injectUploadPath(tempDir.toString());
     }
