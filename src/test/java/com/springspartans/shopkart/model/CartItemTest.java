@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.sql.Timestamp;
 import java.time.Instant;
 
-public class CartItemTest {
+class CartItemTest {
 
     private Customer customer;
     private Product product;
@@ -31,7 +31,7 @@ public class CartItemTest {
     void testCreateSuccess() {
         // Arrange
         int quantity = 2;
-        
+
         // Act
         CartItem item = new CartItem(customer, product, quantity);
 
@@ -47,7 +47,7 @@ public class CartItemTest {
         // Arrange
         int quantity = 1;
         String message = "Customer cannot be null";
-        
+
         // Act
         Exception ex = assertThrows(IllegalArgumentException.class, () -> {
             new CartItem(null, product, quantity);
@@ -63,7 +63,7 @@ public class CartItemTest {
         // Arrange
         int quantity = 1;
         String message = "Product cannot be null";
-        
+
         // Act
         Exception ex = assertThrows(IllegalArgumentException.class, () -> {
             new CartItem(customer, null, quantity);
@@ -79,7 +79,7 @@ public class CartItemTest {
         // Arrange
         int quantity = 0;
         String message = "Quantity  must be positive";
-        
+
         // Act
         Exception ex = assertThrows(IllegalArgumentException.class, () -> {
             new CartItem(customer, product, quantity);
@@ -95,7 +95,7 @@ public class CartItemTest {
         // Arrange
         int quantity = -5;
         String message = "Quantity  must be positive";
-        
+
         // Act
         Exception ex = assertThrows(IllegalArgumentException.class, () -> {
             new CartItem(customer, product, quantity);
@@ -107,7 +107,7 @@ public class CartItemTest {
 
     @DisplayName("Validate toString method format")
     @Test
-    public void testToString() {
+    void testToString() {
         // Arrange
         CartItem cartItem = new CartItem();
         Timestamp now = Timestamp.from(Instant.now());
@@ -119,9 +119,9 @@ public class CartItemTest {
         cartItem.setProduct(product);
         cartItem.setQuantity(quantity);
         cartItem.setAddedDate(now);
-        String expectedString = "CartItem [slno=" + slno + ", customer=" + customer.toString() + 
-                                ", product=" + product.toString() + 
-                                ", quantity=" + quantity + ", addedDate=" + now.toString() + "]";
+        String expectedString = "CartItem [slno=" + slno + ", customer=" + customer.toString() +
+                ", product=" + product.toString() +
+                ", quantity=" + quantity + ", addedDate=" + now.toString() + "]";
 
         // Act
         String actualString = cartItem.toString();

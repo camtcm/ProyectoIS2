@@ -22,17 +22,17 @@ import com.springspartans.shopkart.model.Product;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.ANY)
 @TestPropertySource(properties = {
-    "spring.jpa.hibernate.ddl-auto=create-drop",
-    "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect",
-    "spring.jpa.show-sql=false"
+        "spring.jpa.hibernate.ddl-auto=create-drop",
+        "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect",
+        "spring.jpa.show-sql=false"
 })
-public class CartItemRepositoryTest {
+class CartItemRepositoryTest {
 
     @Autowired
     private CartItemRepository cartItemRepository;
 
     @Autowired
-    private TestEntityManager entityManager; 
+    private TestEntityManager entityManager;
 
     private Customer customer;
     private Product product;
@@ -73,7 +73,7 @@ public class CartItemRepositoryTest {
     @DisplayName("Debe retornar exactamente la cantidad que tenga el cliente")
     void findByCustId_ExactCartItems() {
         // Arrange
-        int targetCustId = customer.getId(); 
+        int targetCustId = customer.getId();
 
         // Act
         List<CartItem> result = cartItemRepository.findByCustId(targetCustId);
@@ -86,15 +86,15 @@ public class CartItemRepositoryTest {
     @DisplayName("Debe retornar únicamente los que pertenezcan al cliente")
     void findByCustId_ItemsBelongingToCustomer() {
         // Arrange
-        int targetCustId = customer.getId(); 
+        int targetCustId = customer.getId();
 
         // Act
         List<CartItem> result = cartItemRepository.findByCustId(targetCustId);
 
         // Assert
         assertThat(result)
-            .extracting(item -> item.getCustomer().getId())
-            .containsOnly(targetCustId);
+                .extracting(item -> item.getCustomer().getId())
+                .containsOnly(targetCustId);
     }
 
     @Test

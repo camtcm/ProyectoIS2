@@ -26,7 +26,7 @@ import com.springspartans.shopkart.repository.CartItemRepository;
 import com.springspartans.shopkart.repository.ProductRepository;
 
 @ExtendWith(MockitoExtension.class)
-public class CartItemServiceTest {
+class CartItemServiceTest {
 
     @Mock
     private CartItemRepository cartRepo;
