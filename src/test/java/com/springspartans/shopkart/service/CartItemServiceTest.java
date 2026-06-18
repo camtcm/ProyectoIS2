@@ -206,7 +206,7 @@ class CartItemServiceTest {
         double result = cartItemService.getCartPrice();
 
         // Assert
-        assertThat(result).isGreaterThan(0);
+        assertThat(result).isPositive();
     }
 
     @Test
@@ -220,7 +220,7 @@ class CartItemServiceTest {
         double result = cartItemService.getCartPrice();
 
         // Assert
-        assertThat(result).isEqualTo(0);
+        assertThat(result).isZero();
     }
 
     @Test
