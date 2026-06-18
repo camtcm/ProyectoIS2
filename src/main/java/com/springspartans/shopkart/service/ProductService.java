@@ -56,33 +56,33 @@ public class ProductService {
 		return productRepository.findByStartName(prefix);
 	}
 	
-	public void addProduct(int id, String name, String category, String brand, double price, MultipartFile image, int stock, double discount) 
+	public void addProduct(int id, ProductDetails details, MultipartFile image)
 			throws IOException, InvalidImageUploadException {
 		String imageName = null;
 		if (image != null && !image.isEmpty()) {
-			if (! imageUploadValidator.isValidImage(image)) { 
+			if (!imageUploadValidator.isValidImage(image)) {
 	            throw new InvalidImageUploadException("Improper file format!");
 	        }
 	        imageName = image.getOriginalFilename();
 	    }
-		Product product = new Product(id, new ProductDetails(name, category, brand, price, imageName, stock, discount));
+		Product product = new Product(id, new ProductDetails(details.getName(), details.getCategory(), details.getBrand(), details.getPrice(), imageName, details.getStock(), details.getDiscount()));
 		productRepository.save(product);
 		if (imageName != null)
 			saveImageToDirectory(image, imageName, "product");
 	}
-	
-	public void updateProduct(int id, String name, String category, String brand, double price, MultipartFile image, int stock, double discount) 
+
+	public void updateProduct(int id, ProductDetails details, MultipartFile image)
 			throws IOException, InvalidImageUploadException {
 		Product existingProduct = productRepository.findById(id)
 		        .orElseThrow(() -> new RuntimeException("Product not found"));
-		existingProduct.setName(name);
-	    existingProduct.setCategory(category);
-	    existingProduct.setBrand(brand);
-	    existingProduct.setPrice(price);
-	    existingProduct.setStock(stock);
-	    existingProduct.setDiscount(discount); 
+		existingProduct.setName(details.getName());
+	    existingProduct.setCategory(details.getCategory());
+	    existingProduct.setBrand(details.getBrand());
+	    existingProduct.setPrice(details.getPrice());
+	    existingProduct.setStock(details.getStock());
+	    existingProduct.setDiscount(details.getDiscount());
 		if (image != null && !image.isEmpty()) {
-			if (!imageUploadValidator.isValidImage(image)) { 
+			if (!imageUploadValidator.isValidImage(image)) {
 	            throw new InvalidImageUploadException("Improper file format!");
 	        }
 	        String imageName = image.getOriginalFilename();

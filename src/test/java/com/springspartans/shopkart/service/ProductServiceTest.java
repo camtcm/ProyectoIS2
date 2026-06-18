@@ -174,7 +174,7 @@ class ProductServiceTest {
         when(imageUploadValidator.isValidImage(mockImage)).thenReturn(true);
         when(mockImage.getOriginalFilename()).thenReturn("laptop.jpg");
 
-        productService.addProduct(1, "Laptop", "Electronics", "Dell", 999.99, mockImage, 10, 5.0);
+        productService.addProduct(1, new ProductDetails("Laptop", "Electronics", "Dell", 999.99, null, 10, 5.0), mockImage);
 
         ArgumentCaptor<Product> captor = ArgumentCaptor.forClass(Product.class);
         verify(productRepository).save(captor.capture());
@@ -185,7 +185,7 @@ class ProductServiceTest {
     @Test
     @DisplayName("addProduct - persists product without image when image is null")
     void addProduct_nullImage_savesProductWithoutImage() throws Exception {
-        productService.addProduct(1, "Laptop", "Electronics", "Dell", 999.99, null, 10, 5.0);
+        productService.addProduct(1, new ProductDetails("Laptop", "Electronics", "Dell", 999.99, null, 10, 5.0), null);
 
         ArgumentCaptor<Product> captor = ArgumentCaptor.forClass(Product.class);
         verify(productRepository).save(captor.capture());
@@ -198,7 +198,7 @@ class ProductServiceTest {
     void addProduct_emptyImage_savesProductWithoutImage() throws Exception {
         when(mockImage.isEmpty()).thenReturn(true);
 
-        productService.addProduct(1, "Laptop", "Electronics", "Dell", 999.99, mockImage, 10, 5.0);
+        productService.addProduct(1, new ProductDetails("Laptop", "Electronics", "Dell", 999.99, null, 10, 5.0), mockImage);
 
         verify(productRepository).save(any(Product.class));
         verify(imageUploadValidator, never()).isValidImage(any());
@@ -211,7 +211,7 @@ class ProductServiceTest {
         when(imageUploadValidator.isValidImage(mockImage)).thenReturn(false);
 
         assertThatThrownBy(() ->
-            productService.addProduct(1, "Laptop", "Electronics", "Dell", 999.99, mockImage, 10, 5.0)
+            productService.addProduct(1, new ProductDetails("Laptop", "Electronics", "Dell", 999.99, null, 10, 5.0), mockImage)
         ).isInstanceOf(InvalidImageUploadException.class)
          .hasMessage("Improper file format!");
 
@@ -226,7 +226,7 @@ class ProductServiceTest {
         when(imageUploadValidator.isValidImage(mockImage)).thenReturn(true);
         when(mockImage.getOriginalFilename()).thenReturn("new-laptop.jpg");
 
-        productService.updateProduct(1, "Laptop Pro", "Electronics", "Dell", 1199.99, mockImage, 5, 8.0);
+        productService.updateProduct(1, new ProductDetails("Laptop Pro", "Electronics", "Dell", 1199.99, null, 5, 8.0), mockImage);
 
         ArgumentCaptor<Product> captor = ArgumentCaptor.forClass(Product.class);
         verify(productRepository).save(captor.capture());
@@ -242,7 +242,7 @@ class ProductServiceTest {
     void updateProduct_nullImage_updatesFieldsOnlyWithoutChangingImage() throws Exception {
         when(productRepository.findById(1)).thenReturn(Optional.of(product1));
 
-        productService.updateProduct(1, "Laptop V2", "Electronics", "Dell", 1099.99, null, 8, 3.0);
+        productService.updateProduct(1, new ProductDetails("Laptop V2", "Electronics", "Dell", 1099.99, null, 8, 3.0), null);
 
         ArgumentCaptor<Product> captor = ArgumentCaptor.forClass(Product.class);
         verify(productRepository).save(captor.capture());
@@ -256,7 +256,7 @@ class ProductServiceTest {
         when(productRepository.findById(99)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() ->
-            productService.updateProduct(99, "Ghost", "None", "None", 0, null, 0, 0)
+            productService.updateProduct(99, new ProductDetails("Ghost", "None", "None", 1.0, null, 0, 0), null)
         ).isInstanceOf(RuntimeException.class)
          .hasMessage("Product not found");
 
@@ -271,7 +271,7 @@ class ProductServiceTest {
         when(imageUploadValidator.isValidImage(mockImage)).thenReturn(false);
 
         assertThatThrownBy(() ->
-            productService.updateProduct(1, "Laptop", "Electronics", "Dell", 999.99, mockImage, 10, 5.0)
+            productService.updateProduct(1, new ProductDetails("Laptop", "Electronics", "Dell", 999.99, null, 10, 5.0), mockImage)
         ).isInstanceOf(InvalidImageUploadException.class);
 
         verify(productRepository, never()).save(any());
@@ -283,7 +283,7 @@ class ProductServiceTest {
         when(productRepository.findById(1)).thenReturn(Optional.of(product1));
         when(mockImage.isEmpty()).thenReturn(true);
 
-        productService.updateProduct(1, "Laptop", "Electronics", "Dell", 999.99, mockImage, 10, 5.0);
+        productService.updateProduct(1, new ProductDetails("Laptop", "Electronics", "Dell", 999.99, null, 10, 5.0), mockImage);
 
         ArgumentCaptor<Product> captor = ArgumentCaptor.forClass(Product.class);
         verify(productRepository).save(captor.capture());
