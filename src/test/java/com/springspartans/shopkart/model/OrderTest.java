@@ -24,7 +24,8 @@ class OrderTest {
                 Order.OrderStatus.Pending,
                 100.0
         );
-
+        
+        System.out.println(order.toString());
         assertEquals(1, order.getId());
         assertEquals(customer, order.getCustomer());
         assertEquals(product, order.getProduct());
@@ -38,6 +39,7 @@ class OrderTest {
     @Test
     void testSetters() {
         Order order = new Order();
+        
 
         Customer customer = new Customer();
         Product product = new Product();
@@ -51,6 +53,8 @@ class OrderTest {
         order.setDelivered_date(now);
         order.setStatus(Order.OrderStatus.Delivered);
         order.setTotal_amount(250.5);
+        System.out.println(order);
+
 
         assertEquals(5, order.getId());
         assertEquals(customer, order.getCustomer());
@@ -60,7 +64,9 @@ class OrderTest {
         assertEquals(now, order.getDelivered_date());
         assertEquals(Order.OrderStatus.Delivered, order.getStatus());
         assertEquals(250.5, order.getTotal_amount());
+
     }
+    
 
     @Test
     void testDefaultValues() {
