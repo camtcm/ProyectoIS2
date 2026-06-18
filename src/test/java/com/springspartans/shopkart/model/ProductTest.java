@@ -13,16 +13,7 @@ class ProductTest {
     void shouldCreateProductWhenValuesAreValid() {
 
         // Arrange & Act
-        Product product = new Product(
-                1,
-                "Mouse",
-                "Electronics",
-                "Logitech",
-                25.5,
-                "img",
-                10,
-                0.0
-        );
+        Product product = new Product(1, new ProductDetails("Mouse", "Electronics", "Logitech", 25.5, "img", 10, 0.0));
 
         // Assert
         assertNotNull(product);
@@ -35,7 +26,7 @@ class ProductTest {
     @DisplayName("Should throw exception when name is null")
     void shouldThrowExceptionWhenNameIsNull() {
         assertThrows(IllegalArgumentException.class, () -> {
-            new Product(1, null, "Electronics", "Logitech", 25.5, "img", 10, 0.0);
+            new Product(1, new ProductDetails(null, "Electronics", "Logitech", 25.5, "img", 10, 0.0));
         });
     }
 
@@ -43,7 +34,7 @@ class ProductTest {
     @DisplayName("Should throw exception when category is null")
     void shouldThrowExceptionWhenCategoryIsNull() {
         assertThrows(IllegalArgumentException.class, () -> {
-            new Product(1, "Mouse", null, "Logitech", 25.5, "img", 10, 0.0);
+            new Product(1, new ProductDetails("Mouse", null, "Logitech", 25.5, "img", 10, 0.0));
         });
     }
 
@@ -51,7 +42,7 @@ class ProductTest {
     @DisplayName("Should throw exception when brand is null")
     void shouldThrowExceptionWhenBrandIsNull() {
         assertThrows(IllegalArgumentException.class, () -> {
-            new Product(1, "Mouse", "Electronics", null, 25.5, "img", 10, 0.0);
+            new Product(1, new ProductDetails("Mouse", "Electronics", null, 25.5, "img", 10, 0.0));
         });
     }
 
@@ -59,7 +50,7 @@ class ProductTest {
     @DisplayName("Should throw exception when price is negative")
     void shouldThrowExceptionWhenPriceIsNegative() {
         assertThrows(IllegalArgumentException.class, () -> {
-            new Product(1, "Mouse", "Electronics", "Logitech", -50.0, "img", 10, 0.0);
+            new Product(1, new ProductDetails("Mouse", "Electronics", "Logitech", -50.0, "img", 10, 0.0));
         });
     }
 
@@ -67,7 +58,7 @@ class ProductTest {
     @DisplayName("Should throw exception when stock is negative")
     void shouldThrowExceptionWhenStockIsNegative() {
         assertThrows(IllegalArgumentException.class, () -> {
-            new Product(1, "Mouse", "Electronics", "Logitech", 25.5, "img", -10, 0.0);
+            new Product(1, new ProductDetails("Mouse", "Electronics", "Logitech", 25.5, "img", -10, 0.0));
         });
     }
 
@@ -76,16 +67,7 @@ class ProductTest {
     void shouldReturnNonNullStringWhenToStringIsCalled() {
 
         // Arrange
-        Product product = new Product(
-                1,
-                "Mouse",
-                "Electronics",
-                "Logitech",
-                25.5,
-                "img",
-                10,
-                0.0
-        );
+        Product product = new Product(1, new ProductDetails("Mouse", "Electronics", "Logitech", 25.5, "img", 10, 0.0));
 
         // Act
         String result = product.toString();

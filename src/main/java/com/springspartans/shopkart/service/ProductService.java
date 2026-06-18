@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.springspartans.shopkart.exception.InvalidImageUploadException;
 import com.springspartans.shopkart.model.Product;
+import com.springspartans.shopkart.model.ProductDetails;
 import com.springspartans.shopkart.repository.ProductRepository;
 import com.springspartans.shopkart.util.ImageUploadValidator;
 
@@ -60,7 +61,7 @@ public class ProductService {
 	        }
 	        imageName = image.getOriginalFilename();
 	    }
-		Product product = new Product(id, name, category, brand, price, imageName, stock, discount);
+		Product product = new Product(id, new ProductDetails(name, category, brand, price, imageName, stock, discount));
 		productRepository.save(product);
 		if (imageName != null)
 			saveImageToDirectory(image, imageName, "product");
