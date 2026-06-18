@@ -38,8 +38,8 @@ public class CartItemService {
 	}
 
 	public boolean incrementQuantity(int itemId) {
-		CartItem item = cartRepo.findById(itemId).get();
-		if (item.getProduct().getStock() > 0) {
+		CartItem item = cartRepo.findById(itemId).orElse(null);
+		if (item != null && item.getProduct().getStock() > 0) {
 			item.setQuantity(item.getQuantity() + 1);
 			item.getProduct().setStock(item.getProduct().getStock() - 1);
 			cartRepo.save(item);
@@ -49,27 +49,33 @@ public class CartItemService {
 	}
 
 	public void decrementQuantity(int itemId) {
-		CartItem item = cartRepo.findById(itemId).get();
-		if (item.getQuantity() == 1) {
-			deleteCartItem(itemId);
-		} else {
-			item.setQuantity(item.getQuantity() - 1);
-			item.getProduct().setStock(item.getProduct().getStock() + 1);
-			cartRepo.save(item);
+		CartItem item = cartRepo.findById(itemId).orElse(null);
+		if (item != null) {
+			if (item.getQuantity() == 1) {
+				deleteCartItem(itemId);
+			} else {
+				item.setQuantity(item.getQuantity() - 1);
+				item.getProduct().setStock(item.getProduct().getStock() + 1);
+				cartRepo.save(item);
+			}
 		}
 	}
 
 	public void deleteCartItem(int itemId) {
-		CartItem item = cartRepo.findById(itemId).get();
-		item.getProduct().setStock(item.getProduct().getStock()+item.getQuantity());
-		cartRepo.deleteById(itemId);
-		
+		CartItem item = cartRepo.findById(itemId).orElse(null);
+		if (item != null) {
+			item.getProduct().setStock(item.getProduct().getStock()+item.getQuantity());
+			cartRepo.deleteById(itemId);
+		}
 	}
 
 	public double getCartItemPrice(int itemId) {
-		CartItem item = cartRepo.findById(itemId).get();
-		Product prod = item.getProduct();
-		return prod.getPrice();
+		CartItem item = cartRepo.findById(itemId).orElse(null);
+		if (item != null) {
+			Product prod = item.getProduct();
+			return prod.getPrice();
+		}
+		return 0;
 	}
 
 	public double getCartPrice() {
