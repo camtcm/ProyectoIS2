@@ -5,6 +5,7 @@ import com.springspartans.shopkart.model.Admin;
 import com.springspartans.shopkart.model.Customer;
 import com.springspartans.shopkart.model.Order;
 import com.springspartans.shopkart.model.Product;
+import com.springspartans.shopkart.model.ProductDetails;
 import com.springspartans.shopkart.model.Order.OrderStatus;
 import com.springspartans.shopkart.service.AdminService;
 import com.springspartans.shopkart.service.CustomerService;
@@ -216,7 +217,7 @@ public class AdminController {
     		@RequestParam int stock, @RequestParam double discount, @RequestParam MultipartFile image
     	) {
     	try {
-			productService.addProduct(0, name, category, brand, price, image, stock, discount);
+			productService.addProduct(0, new ProductDetails(name, category, brand, price, null, stock, discount), image);
 		} catch (IOException e) {			
 			e.printStackTrace();
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -254,7 +255,7 @@ public class AdminController {
     		@RequestParam double price, @RequestParam int stock, @RequestParam double discount, @RequestParam MultipartFile image
     	) {
     	try {
-			productService.updateProduct(id, name, category, brand, price, image, stock, discount);
+			productService.updateProduct(id, new ProductDetails(name, category, brand, price, null, stock, discount), image);
 		} catch (IOException e) {			
 			e.printStackTrace();
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
