@@ -21,45 +21,45 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "customer")
 public class Customer {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id; 
-    
+    private int id;
+
     @Column(nullable = false, length = 50)
     private String name;
-    
+
     @Column(nullable = false, unique = true, length = 50)
     private String email;
-    
+
     @Column(nullable = false, length = 72)
     private String password;
-    
+
     @Column(nullable = false)
     private String address;
-    
+
     @Column(nullable = false)
     private Long phone;
-    
+
     @Column(length = 50)
     private String profilePic;
-    
+
     @Column(name = "signup_date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp signupDate = Timestamp.from(Instant.now());
-    
+
     @Column(name = "last_login_date", columnDefinition = "TIMESTAMP DEFAULT NULL")
     private Timestamp lastLoginDate;
-    
+
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<CartItem> cartItems = new ArrayList<>();
-    
+
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Order> orders = new ArrayList<>();
-    
+
     public Customer() {
-    // Required by JPA.
+        // Required by JPA.
     }
 
     public static CustomerBuilder builder() {
@@ -67,6 +67,7 @@ public class Customer {
     }
 
     public static class CustomerBuilder {
+
         private final Customer customer = new Customer();
 
         public CustomerBuilder id(int id) {
@@ -118,7 +119,7 @@ public class Customer {
             return customer;
         }
     }
-    
+
     public int getId() {
         return id;
     }
@@ -210,10 +211,26 @@ public class Customer {
         this.lastLoginDate = lastLoginDate;
     }
 
+    public List<CartItem> getCartItems() {
+        return cartItems;
+    }
+
+    public void setCartItems(List<CartItem> cartItems) {
+        this.cartItems = cartItems;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
     @Override
     public String toString() {
-        return "Customer [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", address="
-                + address + ", phone=" + phone + ", profilePic=" + profilePic + ", signupDate=" + signupDate
-                + ", lastLoginDate=" + lastLoginDate + "]";
+        return "Customer [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password
+                + ", address=" + address + ", phone=" + phone + ", profilePic=" + profilePic
+                + ", signupDate=" + signupDate + ", lastLoginDate=" + lastLoginDate + "]";
     }
 }

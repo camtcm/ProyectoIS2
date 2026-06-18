@@ -27,7 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class CustomerService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerService.class);
-    private static final String LOGGED_IN_CUSTOMER_ATTRIBUTE = "loggedInCustomer";
+    private static final String LOGGED_IN_CUSTOMER_ID_ATTRIBUTE = "loggedInCustomerId";
 
     private final String uploadPath;
     private final CustomerRepository customerRepository;
@@ -58,7 +58,7 @@ public class CustomerService {
             Customer loggedInCustomer = customer.get();
             loggedInCustomer.setLastLoginDate(Timestamp.from(Instant.now()));
             customerRepository.save(loggedInCustomer);
-            httpSession.setAttribute(LOGGED_IN_CUSTOMER_ATTRIBUTE, loggedInCustomer);
+            httpSession.setAttribute(LOGGED_IN_CUSTOMER_ID_ATTRIBUTE, loggedInCustomer.getId());
             return true;
         }
         return false;
@@ -79,14 +79,18 @@ public class CustomerService {
     }
 
     public Customer getCustomer() {
-        return (Customer) httpSession.getAttribute(LOGGED_IN_CUSTOMER_ATTRIBUTE);
+        Integer customerId = (Integer) httpSession.getAttribute(LOGGED_IN_CUSTOMER_ID_ATTRIBUTE);
+        if (customerId == null) {
+            return null;
+        }
+        return customerRepository.findById(customerId).orElse(null);
     }
 
     public boolean updateCustomer(
             String newName, long newPhone, String newAddress,
             String newPassword, String oldPassword, MultipartFile profilePicture
     ) throws IOException, InvalidPasswordException, InvalidImageUploadException {
-        Customer loggedInCustomer = (Customer) httpSession.getAttribute(LOGGED_IN_CUSTOMER_ATTRIBUTE);
+        Customer loggedInCustomer = getCustomer();
 
         if (loggedInCustomer != null && passwordEncoder.matches(oldPassword, loggedInCustomer.getPassword())) {
             if (!newPassword.isEmpty() && !passwordValidator.isValidPassword(newPassword)) {
@@ -115,7 +119,7 @@ public class CustomerService {
                     .build();
 
             customerRepository.save(updatedCustomer);
-            httpSession.setAttribute(LOGGED_IN_CUSTOMER_ATTRIBUTE, updatedCustomer);
+            httpSession.setAttribute(LOGGED_IN_CUSTOMER_ID_ATTRIBUTE, updatedCustomer.getId());
 
             if (profilePicture != null && !profilePicture.isEmpty()) {
                 if (!imageUploadValidator.isValidImage(profilePicture)) {

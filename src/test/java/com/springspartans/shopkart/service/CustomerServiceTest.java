@@ -27,6 +27,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class CustomerServiceTest {
 
+    private static final String LOGGED_IN_CUSTOMER_ID_ATTRIBUTE = "loggedInCustomerId";
+
     @Mock
     private CustomerRepository customerRepository;
 
@@ -79,7 +81,7 @@ class CustomerServiceTest {
         assertTrue(result);
         assertNotNull(customer.getLastLoginDate());
         verify(customerRepository).save(customer);
-        verify(httpSession).setAttribute("loggedInCustomer", customer);
+        verify(httpSession).setAttribute(LOGGED_IN_CUSTOMER_ID_ATTRIBUTE, 1);
     }
 
     @Test
@@ -168,8 +170,10 @@ class CustomerServiceTest {
 
     @Test
     void shouldGetCustomerFromSession() {
-        when(httpSession.getAttribute("loggedInCustomer"))
-                .thenReturn(customer);
+        when(httpSession.getAttribute(LOGGED_IN_CUSTOMER_ID_ATTRIBUTE))
+                .thenReturn(1);
+        when(customerRepository.findById(1))
+                .thenReturn(Optional.of(customer));
 
         Customer result = customerService.getCustomer();
 
@@ -180,8 +184,10 @@ class CustomerServiceTest {
 
     @Test
     void shouldUpdateCustomerSuccessfully() throws Exception {
-        when(httpSession.getAttribute("loggedInCustomer"))
-                .thenReturn(customer);
+        when(httpSession.getAttribute(LOGGED_IN_CUSTOMER_ID_ATTRIBUTE))
+                .thenReturn(1);
+        when(customerRepository.findById(1))
+                .thenReturn(Optional.of(customer));
 
         boolean result = customerService.updateCustomer(
                 "Juan Actualizado", 999999999L, "Lima",
@@ -190,13 +196,15 @@ class CustomerServiceTest {
 
         assertTrue(result);
         verify(customerRepository).save(any(Customer.class));
-        verify(httpSession).setAttribute(eq("loggedInCustomer"), any(Customer.class));
+        verify(httpSession).setAttribute(eq(LOGGED_IN_CUSTOMER_ID_ATTRIBUTE), eq(1));
     }
 
     @Test
     void shouldReturnFalseWhenUpdateOldPasswordIsWrong() throws Exception {
-        when(httpSession.getAttribute("loggedInCustomer"))
-                .thenReturn(customer);
+        when(httpSession.getAttribute(LOGGED_IN_CUSTOMER_ID_ATTRIBUTE))
+                .thenReturn(1);
+        when(customerRepository.findById(1))
+                .thenReturn(Optional.of(customer));
 
         boolean result = customerService.updateCustomer(
                 "Juan", 999999999L, "Lima",
@@ -209,8 +217,10 @@ class CustomerServiceTest {
 
     @Test
     void shouldThrowExceptionWhenUpdateNewPasswordIsInvalid() {
-        when(httpSession.getAttribute("loggedInCustomer"))
-                .thenReturn(customer);
+        when(httpSession.getAttribute(LOGGED_IN_CUSTOMER_ID_ATTRIBUTE))
+                .thenReturn(1);
+        when(customerRepository.findById(1))
+                .thenReturn(Optional.of(customer));
 
         assertThrows(InvalidPasswordException.class, () -> {
             customerService.updateCustomer(
