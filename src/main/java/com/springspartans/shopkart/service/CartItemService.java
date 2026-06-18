@@ -10,9 +10,13 @@ import com.springspartans.shopkart.model.Customer;
 import com.springspartans.shopkart.model.Product;
 import com.springspartans.shopkart.repository.CartItemRepository;
 import com.springspartans.shopkart.repository.ProductRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class CartItemService {
+	private static final Logger logger = LoggerFactory.getLogger(CartItemService.class);
+
 	@Autowired
 	private CartItemRepository cartRepo;
 	@Autowired
@@ -93,7 +97,7 @@ public class CartItemService {
 	public void addToCart(int itemId, Customer cust) {
 		Product prod = prodRepo.findById(itemId).orElse(null);
 		if (prod == null) {
-			System.out.println("Product not found for id: " + itemId);
+			logger.warn("Product not found for id: {}", itemId);
 			return;
 		}
 		if (prod.getStock() > 0) 
