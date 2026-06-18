@@ -72,30 +72,24 @@ class CustomerServiceTest {
 
     @Test
     void shouldLoginSuccessfully() {
-        // Arrange
         when(customerRepository.findByEmail("juan@gmail.com"))
                 .thenReturn(Optional.of(customer));
 
-        // Act
         boolean result = customerService.login("juan@gmail.com", "Password123!");
 
-        // Assert
         assertTrue(result);
-        assertNotNull(customer.getLast_login_date());
+        assertNotNull(customer.getLastLoginDate());
         verify(customerRepository).save(customer);
         verify(httpSession).setAttribute("loggedInCustomer", customer);
     }
 
     @Test
     void shouldReturnFalseWhenLoginEmailDoesNotExist() {
-        // Arrange
         when(customerRepository.findByEmail("noexiste@gmail.com"))
                 .thenReturn(Optional.empty());
 
-        // Act
         boolean result = customerService.login("noexiste@gmail.com", "Password123!");
 
-        // Assert
         assertFalse(result);
         verify(customerRepository, never()).save(any(Customer.class));
         verify(httpSession, never()).setAttribute(anyString(), any());
@@ -103,14 +97,11 @@ class CustomerServiceTest {
 
     @Test
     void shouldReturnFalseWhenLoginPasswordIsWrong() {
-        // Arrange
         when(customerRepository.findByEmail("juan@gmail.com"))
                 .thenReturn(Optional.of(customer));
 
-        // Act
         boolean result = customerService.login("juan@gmail.com", "WrongPassword!");
 
-        // Assert
         assertFalse(result);
         verify(customerRepository, never()).save(any(Customer.class));
         verify(httpSession, never()).setAttribute(anyString(), any());
@@ -118,7 +109,6 @@ class CustomerServiceTest {
 
     @Test
     void shouldSignupSuccessfully() throws InvalidPasswordException {
-        // Arrange
         Customer newCustomer = new Customer(
                 2,
                 "Maria Lopez",
@@ -134,33 +124,27 @@ class CustomerServiceTest {
         when(customerRepository.findByEmail("maria@gmail.com"))
                 .thenReturn(Optional.empty());
 
-        // Act
         boolean result = customerService.signup(newCustomer);
 
-        // Assert
         assertTrue(result);
         assertNotEquals("Password123!", newCustomer.getPassword());
-        assertNotNull(newCustomer.getSignup_date());
+        assertNotNull(newCustomer.getSignupDate());
         verify(customerRepository).save(newCustomer);
     }
 
     @Test
     void shouldReturnFalseWhenSignupEmailAlreadyExists() throws InvalidPasswordException {
-        // Arrange
         when(customerRepository.findByEmail("juan@gmail.com"))
                 .thenReturn(Optional.of(customer));
 
-        // Act
         boolean result = customerService.signup(customer);
 
-        // Assert
         assertFalse(result);
         verify(customerRepository, never()).save(any(Customer.class));
     }
 
     @Test
     void shouldThrowExceptionWhenSignupPasswordIsInvalid() {
-        // Arrange
         Customer newCustomer = new Customer(
                 3,
                 "Carlos Ramos",
@@ -176,7 +160,6 @@ class CustomerServiceTest {
         when(customerRepository.findByEmail("carlos@gmail.com"))
                 .thenReturn(Optional.empty());
 
-        // Act y Assert
         assertThrows(InvalidPasswordException.class, () -> {
             customerService.signup(newCustomer);
         });
@@ -186,14 +169,11 @@ class CustomerServiceTest {
 
     @Test
     void shouldGetCustomerFromSession() {
-        // Arrange
         when(httpSession.getAttribute("loggedInCustomer"))
                 .thenReturn(customer);
 
-        // Act
         Customer result = customerService.getCustomer();
 
-        // Assert
         assertNotNull(result);
         assertEquals("Juan Perez", result.getName());
         assertEquals("juan@gmail.com", result.getEmail());
@@ -201,17 +181,14 @@ class CustomerServiceTest {
 
     @Test
     void shouldUpdateCustomerSuccessfully() throws Exception {
-        // Arrange
         when(httpSession.getAttribute("loggedInCustomer"))
                 .thenReturn(customer);
 
-        // Act
         boolean result = customerService.updateCustomer(
                 "Juan Actualizado", 999999999L, "Lima",
                 "Password123!", "Password123!", null
         );
 
-        // Assert
         assertTrue(result);
         verify(customerRepository).save(any(Customer.class));
         verify(httpSession).setAttribute(eq("loggedInCustomer"), any(Customer.class));
@@ -219,28 +196,23 @@ class CustomerServiceTest {
 
     @Test
     void shouldReturnFalseWhenUpdateOldPasswordIsWrong() throws Exception {
-        // Arrange
         when(httpSession.getAttribute("loggedInCustomer"))
                 .thenReturn(customer);
 
-        // Act
         boolean result = customerService.updateCustomer(
                 "Juan", 999999999L, "Lima",
                 "", "ContrasenaIncorrecta", null
         );
 
-        // Assert
         assertFalse(result);
         verify(customerRepository, never()).save(any(Customer.class));
     }
 
     @Test
     void shouldThrowExceptionWhenUpdateNewPasswordIsInvalid() {
-        // Arrange
         when(httpSession.getAttribute("loggedInCustomer"))
                 .thenReturn(customer);
 
-        // Act y Assert
         assertThrows(InvalidPasswordException.class, () -> {
             customerService.updateCustomer(
                     "Juan", 999999999L, "Lima",
@@ -253,14 +225,11 @@ class CustomerServiceTest {
 
     @Test
     void shouldGetAllCustomers() {
-        // Arrange
         when(customerRepository.findAll())
                 .thenReturn(List.of(customer));
 
-        // Act
         var result = customerService.getAllCustomers();
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals("Juan Perez", result.get(0).getName());
@@ -268,59 +237,46 @@ class CustomerServiceTest {
 
     @Test
     void shouldDeleteCustomer() {
-        // Act
         customerService.deleteCustomer(1);
 
-        // Assert
         verify(customerRepository).deleteById(1);
     }
 
     @Test
     void shouldCountCustomers() {
-        // Arrange
         when(customerRepository.count()).thenReturn(5L);
 
-        // Act
         int total = customerService.countCustomers();
 
-        // Assert
         assertEquals(5, total);
     }
 
     @Test
     void shouldCountSignupByDate() {
-        // Arrange
         Timestamp date = Timestamp.from(Instant.now());
-        when(customerRepository.countBySignup_dateBetween(any(Timestamp.class), any(Timestamp.class)))
+        when(customerRepository.countBySignupDateBetween(any(Timestamp.class), any(Timestamp.class)))
                 .thenReturn(3);
 
-        // Act
         int result = customerService.countSignupByDate(date);
 
-        // Assert
         assertEquals(3, result);
     }
 
     @Test
     void shouldCountLoginByDate() {
-        // Arrange
         Timestamp date = Timestamp.from(Instant.now());
-        when(customerRepository.countByLast_login_dateBetween(any(Timestamp.class), any(Timestamp.class)))
+        when(customerRepository.countByLastLoginDateBetween(any(Timestamp.class), any(Timestamp.class)))
                 .thenReturn(2);
 
-        // Act
         int result = customerService.countLoginByDate(date);
 
-        // Assert
         assertEquals(2, result);
     }
 
     @Test
     void shouldLogoutSuccessfully() {
-        // Act
         customerService.logout();
 
-        // Assert
         verify(httpSession).invalidate();
     }
 }

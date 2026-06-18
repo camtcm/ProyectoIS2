@@ -26,8 +26,8 @@ import java.util.Optional;
 @Service
 public class CustomerService {
 	
-	@Autowired
-	private String uploadPath; 
+    @Autowired
+    private String uploadPath; 
 	
     @Autowired
     private CustomerRepository customerRepository;
@@ -47,11 +47,10 @@ public class CustomerService {
     public boolean login(String email, String password) {
         Optional<Customer> customer = customerRepository.findByEmail(email);
         if (customer.isPresent() && passwordEncoder.matches(password, customer.get().getPassword())) {
-        	 Customer loggedInCustomer = customer.get();
-             loggedInCustomer.setLast_login_date(Timestamp.from(Instant.now()));
-             customerRepository.save(loggedInCustomer);
-//             System.out.println("New Last Login Date: " + loggedInCustomer.getLast_login_date());
-             httpSession.setAttribute("loggedInCustomer", loggedInCustomer);
+            Customer loggedInCustomer = customer.get();
+            loggedInCustomer.setLastLoginDate(Timestamp.from(Instant.now()));
+            customerRepository.save(loggedInCustomer);
+            httpSession.setAttribute("loggedInCustomer", loggedInCustomer);
             return true;
         }
         return false;
@@ -62,10 +61,10 @@ public class CustomerService {
             return false;
         }
         if (!passwordValidator.isValidPassword(customer.getPassword())) {
-        	throw new InvalidPasswordException("Invalid password entered!");
+            throw new InvalidPasswordException("Invalid password entered!");
         }
-        customer.setSignup_date(Timestamp.from(Instant.now()));
-        System.out.println("Signup Date: " + customer.getSignup_date());
+        customer.setSignupDate(Timestamp.from(Instant.now()));
+        System.out.println("Signup Date: " + customer.getSignupDate());
         customer.setPassword(passwordEncoder.encode(customer.getPassword()));
         customerRepository.save(customer);
         return true;
@@ -76,40 +75,64 @@ public class CustomerService {
     }
 
     public boolean updateCustomer(
-    	String newName, long newPhone, String newAddress, 
-    	String newPassword, String oldPassword, MultipartFile profilePicture
+        String newName, long newPhone, String newAddress, 
+        String newPassword, String oldPassword, MultipartFile profilePicture
     ) throws IOException, InvalidPasswordException, InvalidImageUploadException {
         Customer loggedInCustomer = (Customer) httpSession.getAttribute("loggedInCustomer");
+
         if (loggedInCustomer != null && passwordEncoder.matches(oldPassword, loggedInCustomer.getPassword())) {
-        	if (!newPassword.isEmpty() && !passwordValidator.isValidPassword(newPassword)) {
-        		throw new InvalidPasswordException("Invalid password entered!");
-        	}
-            String encodedPassword = newPassword.isEmpty() ? loggedInCustomer.getPassword() : passwordEncoder.encode(newPassword);
-            String profilePictureName = (profilePicture != null && !profilePicture.isEmpty()) ? "user" + loggedInCustomer.getId() + ".jpg" : null;
-            Customer updatedCustomer = new Customer(loggedInCustomer.getId(), newName, loggedInCustomer.getEmail(), encodedPassword, newAddress, newPhone, profilePictureName, loggedInCustomer.getSignup_date(), loggedInCustomer.getLast_login_date());
+            if (!newPassword.isEmpty() && !passwordValidator.isValidPassword(newPassword)) {
+                throw new InvalidPasswordException("Invalid password entered!");
+            }
+
+            String encodedPassword = newPassword.isEmpty()
+                    ? loggedInCustomer.getPassword()
+                    : passwordEncoder.encode(newPassword);
+
+            String profilePictureName = (profilePicture != null && !profilePicture.isEmpty())
+                    ? "user" + loggedInCustomer.getId() + ".jpg"
+                    : null;
+
+            Customer updatedCustomer = new Customer(
+                    loggedInCustomer.getId(),
+                    newName,
+                    loggedInCustomer.getEmail(),
+                    encodedPassword,
+                    newAddress,
+                    newPhone,
+                    profilePictureName,
+                    loggedInCustomer.getSignupDate(),
+                    loggedInCustomer.getLastLoginDate()
+            );
+
             customerRepository.save(updatedCustomer);
             httpSession.setAttribute("loggedInCustomer", updatedCustomer);
             
             if (imageUploadValidator.isValidImage(profilePicture)) {
-            	String customerUploadPath = uploadPath + "/customer";
+                String customerUploadPath = uploadPath + "/customer";
                 File destination = new File(customerUploadPath);
+
                 if (!destination.exists()) {
-                	boolean created = destination.mkdirs();
-                	destination.setWritable(true);
-                	if (created) {
-                		System.out.println("Created directory : " + destination.getAbsolutePath());
-                	} else {
-                		System.out.println(destination.getAbsolutePath() + "already exists");
-                	}
+                    boolean created = destination.mkdirs();
+                    destination.setWritable(true);
+
+                    if (created) {
+                        System.out.println("Created directory : " + destination.getAbsolutePath());
+                    } else {
+                        System.out.println(destination.getAbsolutePath() + "already exists");
+                    }
                 }
+
                 File fileToSave = new File(destination, profilePictureName);
                 profilePicture.transferTo(fileToSave);
                 System.out.println("Saved file : " + fileToSave.getAbsolutePath());
-            }  else if (profilePicture != null && !profilePicture.isEmpty()) {
-            	throw new InvalidImageUploadException("Improper file format!");
+            } else if (profilePicture != null && !profilePicture.isEmpty()) {
+                throw new InvalidImageUploadException("Improper file format!");
             }
+
             return true;
         }
+
         return false;
     }
 
@@ -118,7 +141,7 @@ public class CustomerService {
     }
     
     public void deleteCustomer(int customerId) {
-            customerRepository.deleteById(customerId);
+        customerRepository.deleteById(customerId);
     }
     
     public int countCustomers() {
@@ -130,7 +153,7 @@ public class CustomerService {
             LocalDate localDate = date.toLocalDateTime().toLocalDate();
             Timestamp startTimestamp = Timestamp.valueOf(localDate.atStartOfDay());
             Timestamp endTimestamp = Timestamp.valueOf(localDate.atTime(23, 59, 59));
-            return customerRepository.countBySignup_dateBetween(startTimestamp, endTimestamp);
+            return customerRepository.countBySignupDateBetween(startTimestamp, endTimestamp);
         } catch (DateTimeParseException e) {
             return 0;
         }
@@ -141,7 +164,7 @@ public class CustomerService {
             LocalDate localDate = date.toLocalDateTime().toLocalDate();
             Timestamp startTimestamp = Timestamp.valueOf(localDate.atStartOfDay());
             Timestamp endTimestamp = Timestamp.valueOf(localDate.atTime(23, 59, 59));
-            return customerRepository.countByLast_login_dateBetween(startTimestamp, endTimestamp);
+            return customerRepository.countByLastLoginDateBetween(startTimestamp, endTimestamp);
         } catch (DateTimeParseException e) {
             return 0;
         }
@@ -150,5 +173,4 @@ public class CustomerService {
     public void logout() {
         httpSession.invalidate();
     }
-    
 }
