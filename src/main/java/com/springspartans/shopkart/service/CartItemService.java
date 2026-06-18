@@ -33,8 +33,7 @@ public class CartItemService {
 	}
 
 	public List<CartItem> getAllCartItemsforCustomer(int custId) {
-		List<CartItem> items = cartRepo.findByCustId(custId);
-		return items;
+		return cartRepo.findByCustId(custId);
 	}
 
 	public boolean incrementQuantity(int itemId) {
