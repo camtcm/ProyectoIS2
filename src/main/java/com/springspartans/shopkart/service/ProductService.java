@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,7 +19,9 @@ import com.springspartans.shopkart.util.ImageUploadValidator;
 
 @Service
 public class ProductService {
-	
+
+	private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
+
 	@Autowired
 	private String uploadPath;
 	
@@ -95,14 +99,14 @@ public class ProductService {
 	        boolean created = destination.mkdirs(); 
 	        destination.setWritable(true);
 	        if (created) {
-        		System.out.println("Created directory : " + destination.getAbsolutePath());
+        		logger.info("Created directory : {}", destination.getAbsolutePath());
         	} else {
-        		System.out.println(destination.getAbsolutePath() + "already exists");
+        		logger.info("{} already exists", destination.getAbsolutePath());
         	}
 	    }
 	    File fileToSave = new File(destination, imageName);
 	    image.transferTo(fileToSave);
-	    System.out.println("Saved file : " + fileToSave.getAbsolutePath());
+	    logger.info("Saved file : {}", fileToSave.getAbsolutePath());
 	}
 
 	public void deleteProduct(int id) {
