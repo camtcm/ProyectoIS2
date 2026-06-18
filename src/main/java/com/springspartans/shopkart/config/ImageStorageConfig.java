@@ -9,16 +9,13 @@ public class ImageStorageConfig {
 
 	@Value("${file.project-path}")
 	private String projectPath;
-	
+
 	@Value("${file.image-path}")
 	private String imagePath;
-	
-	private String uploadPath;
 
-    @Bean
-    String getUploadPath() {
-		uploadPath = projectPath + imagePath;
-		return uploadPath;
+	@Bean
+	String getUploadPath() {
+		return projectPath + imagePath;
 	}
-    
+
 }
