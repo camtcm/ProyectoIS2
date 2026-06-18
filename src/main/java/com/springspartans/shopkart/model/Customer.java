@@ -59,19 +59,64 @@ public class Customer {
     private List<Order> orders = new ArrayList<>();
     
     public Customer() {
+    // Required by JPA.
     }
 
-    public Customer(int id, String name, String email, String password, String address, Long phone, String profilePic,
-            Timestamp signupDate, Timestamp lastLoginDate) {
-        this.id = id;
-        setName(name);
-        setEmail(email);
-        setPassword(password);
-        setAddress(address);
-        setPhone(phone);
-        setProfilePic(profilePic);
-        setSignupDate(signupDate);
-        this.lastLoginDate = lastLoginDate;
+    public static CustomerBuilder builder() {
+        return new CustomerBuilder();
+    }
+
+    public static class CustomerBuilder {
+        private final Customer customer = new Customer();
+
+        public CustomerBuilder id(int id) {
+            customer.setId(id);
+            return this;
+        }
+
+        public CustomerBuilder name(String name) {
+            customer.setName(name);
+            return this;
+        }
+
+        public CustomerBuilder email(String email) {
+            customer.setEmail(email);
+            return this;
+        }
+
+        public CustomerBuilder password(String password) {
+            customer.setPassword(password);
+            return this;
+        }
+
+        public CustomerBuilder address(String address) {
+            customer.setAddress(address);
+            return this;
+        }
+
+        public CustomerBuilder phone(Long phone) {
+            customer.setPhone(phone);
+            return this;
+        }
+
+        public CustomerBuilder profilePic(String profilePic) {
+            customer.setProfilePic(profilePic);
+            return this;
+        }
+
+        public CustomerBuilder signupDate(Timestamp signupDate) {
+            customer.setSignupDate(signupDate);
+            return this;
+        }
+
+        public CustomerBuilder lastLoginDate(Timestamp lastLoginDate) {
+            customer.setLastLoginDate(lastLoginDate);
+            return this;
+        }
+
+        public Customer build() {
+            return customer;
+        }
     }
     
     public int getId() {

@@ -93,17 +93,17 @@ public class CustomerService {
                     ? "user" + loggedInCustomer.getId() + ".jpg"
                     : null;
 
-            Customer updatedCustomer = new Customer(
-                    loggedInCustomer.getId(),
-                    newName,
-                    loggedInCustomer.getEmail(),
-                    encodedPassword,
-                    newAddress,
-                    newPhone,
-                    profilePictureName,
-                    loggedInCustomer.getSignupDate(),
-                    loggedInCustomer.getLastLoginDate()
-            );
+            Customer updatedCustomer = Customer.builder()
+                    .id(loggedInCustomer.getId())
+                    .name(newName)
+                    .email(loggedInCustomer.getEmail())
+                    .password(encodedPassword)
+                    .address(newAddress)
+                    .phone(newPhone)
+                    .profilePic(profilePictureName)
+                    .signupDate(loggedInCustomer.getSignupDate())
+                    .lastLoginDate(loggedInCustomer.getLastLoginDate())
+                    .build();
 
             customerRepository.save(updatedCustomer);
             httpSession.setAttribute("loggedInCustomer", updatedCustomer);

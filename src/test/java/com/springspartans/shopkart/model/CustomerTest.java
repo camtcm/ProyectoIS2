@@ -20,17 +20,17 @@ class CustomerTest {
         signupDate = Timestamp.from(Instant.now());
         lastLoginDate = Timestamp.from(Instant.now());
 
-        customer = new Customer(
-                1,
-                "Juan Perez",
-                "juan@gmail.com",
-                "123456",
-                "Arequipa",
-                987654321L,
-                "perfil.jpg",
-                signupDate,
-                null
-        );
+        customer = Customer.builder()
+                .id(1)
+                .name("Juan Perez")
+                .email("juan@gmail.com")
+                .password("123456")
+                .address("Arequipa")
+                .phone(987654321L)
+                .profilePic("perfil.jpg")
+                .signupDate(signupDate)
+                .lastLoginDate(null)
+                .build();
     }
 
     @AfterEach
@@ -69,8 +69,17 @@ class CustomerTest {
         String expectedMessage = "Name cannot be null or empty";
 
         Exception ex = assertThrows(IllegalArgumentException.class, () -> {
-            new Customer(1, null, "correo@gmail.com", "123456", "Arequipa",
-                    987654321L, "perfil.jpg", signupDate, null);
+            Customer.builder()
+                    .id(1)
+                    .name(null)
+                    .email("correo@gmail.com")
+                    .password("123456")
+                    .address("Arequipa")
+                    .phone(987654321L)
+                    .profilePic("perfil.jpg")
+                    .signupDate(signupDate)
+                    .lastLoginDate(null)
+                    .build();
         });
 
         assertEquals(expectedMessage, ex.getMessage());
@@ -81,8 +90,17 @@ class CustomerTest {
         String expectedMessage = "Name cannot be null or empty";
 
         Exception ex = assertThrows(IllegalArgumentException.class, () -> {
-            new Customer(1, "", "correo@gmail.com", "123456", "Arequipa",
-                    987654321L, "perfil.jpg", signupDate, null);
+            Customer.builder()
+                    .id(1)
+                    .name("")
+                    .email("correo@gmail.com")
+                    .password("123456")
+                    .address("Arequipa")
+                    .phone(987654321L)
+                    .profilePic("perfil.jpg")
+                    .signupDate(signupDate)
+                    .lastLoginDate(null)
+                    .build();
         });
 
         assertEquals(expectedMessage, ex.getMessage());
@@ -93,8 +111,17 @@ class CustomerTest {
         String expectedMessage = "Email cannot be null or empty";
 
         Exception ex = assertThrows(IllegalArgumentException.class, () -> {
-            new Customer(1, "Juan Perez", null, "123456", "Arequipa",
-                    987654321L, "perfil.jpg", signupDate, null);
+            Customer.builder()
+                    .id(1)
+                    .name("Juan Perez")
+                    .email(null)
+                    .password("123456")
+                    .address("Arequipa")
+                    .phone(987654321L)
+                    .profilePic("perfil.jpg")
+                    .signupDate(signupDate)
+                    .lastLoginDate(null)
+                    .build();
         });
 
         assertEquals(expectedMessage, ex.getMessage());
@@ -105,8 +132,17 @@ class CustomerTest {
         String expectedMessage = "Email cannot be null or empty";
 
         Exception ex = assertThrows(IllegalArgumentException.class, () -> {
-            new Customer(1, "Juan Perez", "", "123456", "Arequipa",
-                    987654321L, "perfil.jpg", signupDate, null);
+            Customer.builder()
+                    .id(1)
+                    .name("Juan Perez")
+                    .email("")
+                    .password("123456")
+                    .address("Arequipa")
+                    .phone(987654321L)
+                    .profilePic("perfil.jpg")
+                    .signupDate(signupDate)
+                    .lastLoginDate(null)
+                    .build();
         });
 
         assertEquals(expectedMessage, ex.getMessage());
@@ -117,8 +153,17 @@ class CustomerTest {
         String expectedMessage = "Password cannot be null or empty";
 
         Exception ex = assertThrows(IllegalArgumentException.class, () -> {
-            new Customer(1, "Juan Perez", "correo@gmail.com", null, "Arequipa",
-                    987654321L, "perfil.jpg", signupDate, null);
+            Customer.builder()
+                    .id(1)
+                    .name("Juan Perez")
+                    .email("correo@gmail.com")
+                    .password(null)
+                    .address("Arequipa")
+                    .phone(987654321L)
+                    .profilePic("perfil.jpg")
+                    .signupDate(signupDate)
+                    .lastLoginDate(null)
+                    .build();
         });
 
         assertEquals(expectedMessage, ex.getMessage());
@@ -129,8 +174,17 @@ class CustomerTest {
         String expectedMessage = "Password cannot be null or empty";
 
         Exception ex = assertThrows(IllegalArgumentException.class, () -> {
-            new Customer(1, "Juan Perez", "correo@gmail.com", "", "Arequipa",
-                    987654321L, "perfil.jpg", signupDate, null);
+            Customer.builder()
+                    .id(1)
+                    .name("Juan Perez")
+                    .email("correo@gmail.com")
+                    .password("")
+                    .address("Arequipa")
+                    .phone(987654321L)
+                    .profilePic("perfil.jpg")
+                    .signupDate(signupDate)
+                    .lastLoginDate(null)
+                    .build();
         });
 
         assertEquals(expectedMessage, ex.getMessage());
@@ -141,8 +195,17 @@ class CustomerTest {
         String expectedMessage = "Address cannot be null or empty";
 
         Exception ex = assertThrows(IllegalArgumentException.class, () -> {
-            new Customer(1, "Juan Perez", "correo@gmail.com", "123456", null,
-                    987654321L, "perfil.jpg", signupDate, null);
+            Customer.builder()
+                    .id(1)
+                    .name("Juan Perez")
+                    .email("correo@gmail.com")
+                    .password("123456")
+                    .address(null)
+                    .phone(987654321L)
+                    .profilePic("perfil.jpg")
+                    .signupDate(signupDate)
+                    .lastLoginDate(null)
+                    .build();
         });
 
         assertEquals(expectedMessage, ex.getMessage());
@@ -153,8 +216,17 @@ class CustomerTest {
         String expectedMessage = "Address cannot be null or empty";
 
         Exception ex = assertThrows(IllegalArgumentException.class, () -> {
-            new Customer(1, "Juan Perez", "correo@gmail.com", "123456", "",
-                    987654321L, "perfil.jpg", signupDate, null);
+            Customer.builder()
+                    .id(1)
+                    .name("Juan Perez")
+                    .email("correo@gmail.com")
+                    .password("123456")
+                    .address("")
+                    .phone(987654321L)
+                    .profilePic("perfil.jpg")
+                    .signupDate(signupDate)
+                    .lastLoginDate(null)
+                    .build();
         });
 
         assertEquals(expectedMessage, ex.getMessage());
@@ -165,8 +237,17 @@ class CustomerTest {
         String expectedMessage = "Phone cannot be null or invalid";
 
         Exception ex = assertThrows(IllegalArgumentException.class, () -> {
-            new Customer(1, "Juan Perez", "correo@gmail.com", "123456", "Arequipa",
-                    null, "perfil.jpg", signupDate, null);
+            Customer.builder()
+                    .id(1)
+                    .name("Juan Perez")
+                    .email("correo@gmail.com")
+                    .password("123456")
+                    .address("Arequipa")
+                    .phone(null)
+                    .profilePic("perfil.jpg")
+                    .signupDate(signupDate)
+                    .lastLoginDate(null)
+                    .build();
         });
 
         assertEquals(expectedMessage, ex.getMessage());
@@ -177,8 +258,17 @@ class CustomerTest {
         String expectedMessage = "Phone cannot be null or invalid";
 
         Exception ex = assertThrows(IllegalArgumentException.class, () -> {
-            new Customer(1, "Juan Perez", "correo@gmail.com", "123456", "Arequipa",
-                    -987654321L, "perfil.jpg", signupDate, null);
+            Customer.builder()
+                    .id(1)
+                    .name("Juan Perez")
+                    .email("correo@gmail.com")
+                    .password("123456")
+                    .address("Arequipa")
+                    .phone(-987654321L)
+                    .profilePic("perfil.jpg")
+                    .signupDate(signupDate)
+                    .lastLoginDate(null)
+                    .build();
         });
 
         assertEquals(expectedMessage, ex.getMessage());
@@ -189,8 +279,17 @@ class CustomerTest {
         String expectedMessage = "Phone cannot be null or invalid";
 
         Exception ex = assertThrows(IllegalArgumentException.class, () -> {
-            new Customer(1, "Juan Perez", "correo@gmail.com", "123456", "Arequipa",
-                    0L, "perfil.jpg", signupDate, null);
+            Customer.builder()
+                    .id(1)
+                    .name("Juan Perez")
+                    .email("correo@gmail.com")
+                    .password("123456")
+                    .address("Arequipa")
+                    .phone(0L)
+                    .profilePic("perfil.jpg")
+                    .signupDate(signupDate)
+                    .lastLoginDate(null)
+                    .build();
         });
 
         assertEquals(expectedMessage, ex.getMessage());

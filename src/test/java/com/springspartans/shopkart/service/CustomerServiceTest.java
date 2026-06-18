@@ -57,17 +57,17 @@ class CustomerServiceTest {
 
         String encodedPassword = passwordEncoder.encode("Password123!");
 
-        customer = new Customer(
-                1,
-                "Juan Perez",
-                "juan@gmail.com",
-                encodedPassword,
-                "Arequipa",
-                987654321L,
-                "perfil.jpg",
-                Timestamp.from(Instant.now()),
-                null
-        );
+        customer = Customer.builder()
+                .id(1)
+                .name("Juan Perez")
+                .email("juan@gmail.com")
+                .password(encodedPassword)
+                .address("Arequipa")
+                .phone(987654321L)
+                .profilePic("perfil.jpg")
+                .signupDate(Timestamp.from(Instant.now()))
+                .lastLoginDate(null)
+                .build();
     }
 
     @Test
@@ -109,17 +109,17 @@ class CustomerServiceTest {
 
     @Test
     void shouldSignupSuccessfully() throws InvalidPasswordException {
-        Customer newCustomer = new Customer(
-                2,
-                "Maria Lopez",
-                "maria@gmail.com",
-                "Password123!",
-                "Lima",
-                912345678L,
-                "maria.jpg",
-                Timestamp.from(Instant.now()),
-                null
-        );
+        Customer newCustomer = Customer.builder()
+                .id(2)
+                .name("Maria Lopez")
+                .email("maria@gmail.com")
+                .password("Password123!")
+                .address("Lima")
+                .phone(912345678L)
+                .profilePic("maria.jpg")
+                .signupDate(Timestamp.from(Instant.now()))
+                .lastLoginDate(null)
+                .build();
 
         when(customerRepository.findByEmail("maria@gmail.com"))
                 .thenReturn(Optional.empty());
@@ -145,17 +145,17 @@ class CustomerServiceTest {
 
     @Test
     void shouldThrowExceptionWhenSignupPasswordIsInvalid() {
-        Customer newCustomer = new Customer(
-                3,
-                "Carlos Ramos",
-                "carlos@gmail.com",
-                "123",
-                "Cusco",
-                923456789L,
-                "carlos.jpg",
-                Timestamp.from(Instant.now()),
-                null
-        );
+        Customer newCustomer = Customer.builder()
+                .id(3)
+                .name("Carlos Ramos")
+                .email("carlos@gmail.com")
+                .password("123")
+                .address("Cusco")
+                .phone(923456789L)
+                .profilePic("carlos.jpg")
+                .signupDate(Timestamp.from(Instant.now()))
+                .lastLoginDate(null)
+                .build();
 
         when(customerRepository.findByEmail("carlos@gmail.com"))
                 .thenReturn(Optional.empty());
