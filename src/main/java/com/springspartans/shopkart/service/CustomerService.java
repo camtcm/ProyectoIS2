@@ -1,8 +1,13 @@
 package com.springspartans.shopkart.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Optional;
 
 import com.springspartans.shopkart.exception.InvalidImageUploadException;
 import com.springspartans.shopkart.exception.InvalidPasswordException;
@@ -13,36 +18,34 @@ import com.springspartans.shopkart.util.PasswordEncoder;
 import com.springspartans.shopkart.util.PasswordValidator;
 
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.util.Optional;
-
 @Service
 public class CustomerService {
-	
-    @Autowired
-    private String uploadPath; 
-	
-    @Autowired
-    private CustomerRepository customerRepository;
-    
-    @Autowired
-    private HttpSession httpSession;
-    
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    
-    @Autowired
-    private PasswordValidator passwordValidator;
 
-    @Autowired
-    private ImageUploadValidator imageUploadValidator;
+    private final String uploadPath;
+    private final CustomerRepository customerRepository;
+    private final HttpSession httpSession;
+    private final PasswordEncoder passwordEncoder;
+    private final PasswordValidator passwordValidator;
+    private final ImageUploadValidator imageUploadValidator;
+
+    public CustomerService(
+            String uploadPath,
+            CustomerRepository customerRepository,
+            HttpSession httpSession,
+            PasswordEncoder passwordEncoder,
+            PasswordValidator passwordValidator,
+            ImageUploadValidator imageUploadValidator
+    ) {
+        this.uploadPath = uploadPath;
+        this.customerRepository = customerRepository;
+        this.httpSession = httpSession;
+        this.passwordEncoder = passwordEncoder;
+        this.passwordValidator = passwordValidator;
+        this.imageUploadValidator = imageUploadValidator;
+    }
 
     public boolean login(String email, String password) {
         Optional<Customer> customer = customerRepository.findByEmail(email);
@@ -75,8 +78,8 @@ public class CustomerService {
     }
 
     public boolean updateCustomer(
-        String newName, long newPhone, String newAddress, 
-        String newPassword, String oldPassword, MultipartFile profilePicture
+            String newName, long newPhone, String newAddress,
+            String newPassword, String oldPassword, MultipartFile profilePicture
     ) throws IOException, InvalidPasswordException, InvalidImageUploadException {
         Customer loggedInCustomer = (Customer) httpSession.getAttribute("loggedInCustomer");
 
@@ -107,7 +110,7 @@ public class CustomerService {
 
             customerRepository.save(updatedCustomer);
             httpSession.setAttribute("loggedInCustomer", updatedCustomer);
-            
+
             if (imageUploadValidator.isValidImage(profilePicture)) {
                 String customerUploadPath = uploadPath + "/customer";
                 File destination = new File(customerUploadPath);
@@ -139,15 +142,15 @@ public class CustomerService {
     public List<Customer> getAllCustomers() {
         return customerRepository.findAll();
     }
-    
+
     public void deleteCustomer(int customerId) {
         customerRepository.deleteById(customerId);
     }
-    
+
     public int countCustomers() {
         return (int) customerRepository.count();
     }
-    
+
     public int countSignupByDate(Timestamp date) {
         try {
             LocalDate localDate = date.toLocalDateTime().toLocalDate();

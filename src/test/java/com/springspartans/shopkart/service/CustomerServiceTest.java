@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -42,18 +41,18 @@ class CustomerServiceTest {
 
     @BeforeEach
     void setUp() {
-        customerService = new CustomerService();
-
         passwordEncoder = new PasswordEncoder();
         passwordValidator = new PasswordValidator();
         imageUploadValidator = new ImageUploadValidator();
 
-        ReflectionTestUtils.setField(customerService, "customerRepository", customerRepository);
-        ReflectionTestUtils.setField(customerService, "httpSession", httpSession);
-        ReflectionTestUtils.setField(customerService, "passwordEncoder", passwordEncoder);
-        ReflectionTestUtils.setField(customerService, "passwordValidator", passwordValidator);
-        ReflectionTestUtils.setField(customerService, "imageUploadValidator", imageUploadValidator);
-        ReflectionTestUtils.setField(customerService, "uploadPath", "/tmp/test");
+        customerService = new CustomerService(
+                "/tmp/test",
+                customerRepository,
+                httpSession,
+                passwordEncoder,
+                passwordValidator,
+                imageUploadValidator
+        );
 
         String encodedPassword = passwordEncoder.encode("Password123!");
 
