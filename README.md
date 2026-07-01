@@ -2,11 +2,11 @@
 
 ## Integrantes
 
-- [Alpaca Torres, Wilbert Rider]
-- [Carpio Mollo, Camila]
-- [Cama Choque, Edison Nicolas]
-- [Saravia Apaza, Damaris Illene]
-- [Villanueva Linares, Mario Raid]
+- Alpaca Torres, Wilbert Rider. usuario: yae-os
+- Cama Choque, Edison Nicolas. LiaR2128
+- Carpio Mollo, Camila. usuario: camtcm
+- Saravia Apaza, Damaris Illene. usuario: Ilenn2004
+- Villanueva Linares, Mario Raid. usuario: mavillanueva24
 
 ## Propósito del proyecto
 
