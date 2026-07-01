@@ -17,7 +17,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import com.springspartans.shopkart.model.CartItem;
 import com.springspartans.shopkart.model.Customer;
-import com.springspartans.shopkart.model.Product;
+import com.springspartans.shopkart.catalog.domain.Product;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.ANY)

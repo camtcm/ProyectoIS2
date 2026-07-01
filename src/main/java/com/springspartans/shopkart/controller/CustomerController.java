@@ -4,7 +4,7 @@ import com.springspartans.shopkart.exception.InvalidImageUploadException;
 import com.springspartans.shopkart.exception.InvalidPasswordException;
 import com.springspartans.shopkart.model.Customer;
 import com.springspartans.shopkart.service.CustomerService;
-import com.springspartans.shopkart.service.ProductService;
+import com.springspartans.shopkart.catalog.application.ProductService;
 
 import java.io.IOException;
 import java.util.List;

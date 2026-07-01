@@ -12,7 +12,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.springspartans.shopkart.model.*;
 import com.springspartans.shopkart.service.CartItemService;
 import com.springspartans.shopkart.service.CustomerService;
-import com.springspartans.shopkart.service.ProductService;
+import com.springspartans.shopkart.catalog.application.ProductService;
 
 @Controller
 @RequestMapping("/cartitem")

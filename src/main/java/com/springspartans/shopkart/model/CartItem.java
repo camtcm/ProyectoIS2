@@ -3,6 +3,7 @@ package com.springspartans.shopkart.model;
 import java.sql.Timestamp;
 import java.time.Instant;
 
+import com.springspartans.shopkart.catalog.domain.Product;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

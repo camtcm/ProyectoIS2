@@ -1,0 +1,90 @@
+package com.springspartans.shopkart.catalog.presentation;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.springspartans.shopkart.catalog.application.ProductService;
+import com.springspartans.shopkart.catalog.domain.Product;
+import com.springspartans.shopkart.model.Customer;
+import com.springspartans.shopkart.service.CustomerService;
+
+@Controller
+@RequestMapping("/product")
+public class ProductController {
+
+    private static final String PRODUCT_LIST = "productList";
+    private static final String CATEGORY_LIST = "categoryList";
+    private static final String CUSTOMER = "customer";
+    private static final String PRODUCT_HOME = "product/home";
+
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private CustomerService customerService;
+
+    @GetMapping
+    public String getAllProducts(Model model) {
+        List<Product> productList = productService.getAllProducts();
+        model.addAttribute(PRODUCT_LIST, productList);
+        List<String> categoryList = productService.getAllCategories();
+        model.addAttribute(CATEGORY_LIST, categoryList);
+        Customer customer = customerService.getCustomer();
+        model.addAttribute(CUSTOMER, customer);
+        return PRODUCT_HOME;
+    }
+
+    @GetMapping("/{id}")
+    public String getProductById(@PathVariable int id, Model model) {
+        Product product = productService.getProductById(id);
+        if (product == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        model.addAttribute("product", product);
+        List<String> categoryList = productService.getAllCategories();
+        model.addAttribute(CATEGORY_LIST, categoryList);
+        Customer customer = customerService.getCustomer();
+        model.addAttribute(CUSTOMER, customer);
+        return "product/details";
+    }
+
+    @GetMapping("/category/{category}")
+    public String getProductsByCategory(@PathVariable String category, Model model) {
+        if (category == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        List<Product> productList = productService.getProductsByCategory(category);
+        if (productList == null || productList.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        model.addAttribute(PRODUCT_LIST, productList);
+        model.addAttribute("category", category);
+        List<String> categoryList = productService.getAllCategories();
+        model.addAttribute(CATEGORY_LIST, categoryList);
+        Customer customer = customerService.getCustomer();
+        model.addAttribute(CUSTOMER, customer);
+        return PRODUCT_HOME;
+    }
+
+    @GetMapping("/search")
+    public String getProductsByStartName(@RequestParam String prefix, Model model) {
+        if (prefix == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        List<Product> productList = productService.getProductsByStartName(prefix);
+        model.addAttribute(PRODUCT_LIST, productList);
+        List<String> categoryList = productService.getAllCategories();
+        model.addAttribute(CATEGORY_LIST, categoryList);
+        Customer customer = customerService.getCustomer();
+        model.addAttribute(CUSTOMER, customer);
+        return PRODUCT_HOME;
+    }
+}

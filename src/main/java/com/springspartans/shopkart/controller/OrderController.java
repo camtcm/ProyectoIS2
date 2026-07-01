@@ -17,7 +17,7 @@ import com.springspartans.shopkart.model.Order;
 import com.springspartans.shopkart.model.Order.OrderStatus;
 import com.springspartans.shopkart.service.CustomerService;
 import com.springspartans.shopkart.service.OrderService;
-import com.springspartans.shopkart.service.ProductService;
+import com.springspartans.shopkart.catalog.application.ProductService;
 
 @Controller
 @RequestMapping("/order")

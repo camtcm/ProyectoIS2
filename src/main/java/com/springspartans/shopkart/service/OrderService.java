@@ -10,12 +10,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.springspartans.shopkart.catalog.domain.Product;
+import com.springspartans.shopkart.catalog.infrastructure.ProductRepository;
 import com.springspartans.shopkart.model.CartItem;
 import com.springspartans.shopkart.model.Order;
 import com.springspartans.shopkart.model.Order.OrderStatus;
-import com.springspartans.shopkart.model.Product;
 import com.springspartans.shopkart.repository.OrderRepository;
-import com.springspartans.shopkart.repository.ProductRepository;
 
 @Service
 public class OrderService {

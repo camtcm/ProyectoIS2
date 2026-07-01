@@ -1,4 +1,4 @@
-package com.springspartans.shopkart.model;
+package com.springspartans.shopkart.catalog.domain;
 
 public class ProductDetails {
 

@@ -2,7 +2,8 @@ package com.springspartans.shopkart.repository;
 
 import com.springspartans.shopkart.model.Order;
 import com.springspartans.shopkart.model.Customer;
-import com.springspartans.shopkart.model.Product;
+import com.springspartans.shopkart.catalog.domain.Product;
+import com.springspartans.shopkart.catalog.infrastructure.ProductRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

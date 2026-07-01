@@ -1,4 +1,4 @@
-package com.springspartans.shopkart.repository;
+package com.springspartans.shopkart.catalog.infrastructure;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -8,7 +8,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
@@ -16,7 +15,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.TestPropertySource;
 
-import com.springspartans.shopkart.model.Product;
+import com.springspartans.shopkart.catalog.domain.Product;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.ANY)
@@ -25,7 +24,7 @@ import com.springspartans.shopkart.model.Product;
     "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect",
     "spring.jpa.show-sql=false"
 })
-public class ProductRepositoryTest {
+class ProductRepositoryTest {
 
     @Autowired
     private ProductRepository productRepository;
@@ -39,7 +38,6 @@ public class ProductRepositoryTest {
 
     @BeforeEach
     void setUp() {
-
         p1 = new Product();
         p1.setName("Laptop");
         p1.setCategory("Electrónica");
@@ -67,90 +65,47 @@ public class ProductRepositoryTest {
         entityManager.flush();
     }
 
-    // findByCategory
     @Test
     void shouldFindProductsByCategory() {
-
-        List<Product> result =
-                productRepository.findByCategory("Electrónica");
-
-        assertThat(result)
-                .hasSize(2)
-                .extracting(Product::getCategory)
-                .containsOnly("Electrónica");
+        List<Product> result = productRepository.findByCategory("Electrónica");
+        assertThat(result).hasSize(2).extracting(Product::getCategory).containsOnly("Electrónica");
     }
 
     @Test
     void shouldReturnEmptyWhenCategoryDoesNotExist() {
-
-        List<Product> result =
-                productRepository.findByCategory("Inexistente");
-
-        assertThat(result).isEmpty();
+        assertThat(productRepository.findByCategory("Inexistente")).isEmpty();
     }
 
     @Test
     void shouldReturnEmptyWhenCategoryIsNull() {
-
-        List<Product> result =
-                productRepository.findByCategory(null);
-
-        assertThat(result).isEmpty();
+        assertThat(productRepository.findByCategory(null)).isEmpty();
     }
-
-    // findByStartName
 
     @Test
     void shouldFindProductsByStartName() {
-
-        List<Product> result =
-                productRepository.findByStartName("La");
-
-        assertThat(result)
-                .isNotEmpty()
-                .extracting(Product::getName)
-                .allMatch(name -> name.startsWith("La"));
+        List<Product> result = productRepository.findByStartName("La");
+        assertThat(result).isNotEmpty().extracting(Product::getName).allMatch(name -> name.startsWith("La"));
     }
 
     @Test
     void shouldReturnSingleProductByPrefix() {
-
-        List<Product> result =
-                productRepository.findByStartName("Lap");
-
-        assertThat(result).hasSize(1);
+        assertThat(productRepository.findByStartName("Lap")).hasSize(1);
     }
 
     @Test
     void shouldReturnAllProductsWhenPrefixIsEmpty() {
-
-        List<Product> result =
-                productRepository.findByStartName("");
-
-        assertThat(result).hasSize(3);
+        assertThat(productRepository.findByStartName("")).hasSize(3);
     }
-
-    // findAllCategories
 
     @Test
     void shouldReturnDistinctCategories() {
-
-        List<String> result =
-                productRepository.findAllCategories();
-
-        assertThat(result)
-                .contains("Electrónica", "Hogar")
-                .doesNotHaveDuplicates();
+        List<String> result = productRepository.findAllCategories();
+        assertThat(result).contains("Electrónica", "Hogar").doesNotHaveDuplicates();
     }
 
     @Test
     void shouldNotReturnNullCategories() {
-
-        List<String> result =
-                productRepository.findAllCategories();
-
-        assertThat(result)
-                .doesNotContainNull();
+        assertThat(productRepository.findAllCategories()).doesNotContainNull();
     }
 
     @AfterEach

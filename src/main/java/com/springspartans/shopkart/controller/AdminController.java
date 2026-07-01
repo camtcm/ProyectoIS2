@@ -4,13 +4,13 @@ import com.springspartans.shopkart.exception.InvalidImageUploadException;
 import com.springspartans.shopkart.model.Admin;
 import com.springspartans.shopkart.model.Customer;
 import com.springspartans.shopkart.model.Order;
-import com.springspartans.shopkart.model.Product;
-import com.springspartans.shopkart.model.ProductDetails;
+import com.springspartans.shopkart.catalog.application.ProductService;
+import com.springspartans.shopkart.catalog.domain.Product;
+import com.springspartans.shopkart.catalog.domain.ProductDetails;
 import com.springspartans.shopkart.model.Order.OrderStatus;
 import com.springspartans.shopkart.service.AdminService;
 import com.springspartans.shopkart.service.CustomerService;
 import com.springspartans.shopkart.service.OrderService;
-import com.springspartans.shopkart.service.ProductService;
 
 import java.io.IOException;
 import java.sql.Timestamp;

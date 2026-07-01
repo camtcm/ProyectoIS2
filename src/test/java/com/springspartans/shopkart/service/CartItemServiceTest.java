@@ -21,9 +21,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.springspartans.shopkart.model.CartItem;
 import com.springspartans.shopkart.model.Customer;
-import com.springspartans.shopkart.model.Product;
+import com.springspartans.shopkart.catalog.domain.Product;
 import com.springspartans.shopkart.repository.CartItemRepository;
-import com.springspartans.shopkart.repository.ProductRepository;
+import com.springspartans.shopkart.catalog.infrastructure.ProductRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class CartItemServiceTest {
