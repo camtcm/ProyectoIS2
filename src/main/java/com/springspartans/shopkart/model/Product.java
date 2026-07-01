@@ -1,5 +1,7 @@
 package com.springspartans.shopkart.model;
 
+import com.springspartans.shopkart.cart.domain.CartItem;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,36 +21,36 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "product")
 public class Product {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    
+
     @Column(nullable = false, length = 100)
     private String name;
-    
+
     @Column(nullable = false, length = 50)
     private String category;
-    
+
     @Column(nullable = false, length = 100)
     private String brand;
-    
+
     @Column(nullable = false)
     private double price;
-    
+
     @Column
     private String image;
-    
+
     @Column(nullable = false)
     private int stock;
-    
+
     @Column(columnDefinition = "DECIMAL(5,2) DEFAULT 0.00")
     private double discount;
-    
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<CartItem> cartItems = new ArrayList<>();
-    
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Order> orders = new ArrayList<>();
@@ -86,7 +88,7 @@ public class Product {
         this.discount = details.getDiscount();
     }
 
-	public int getId() {
+    public int getId() {
         return id;
     }
 
@@ -133,27 +135,27 @@ public class Product {
     public void setImage(String image) {
         this.image = image;
     }
-    
+
     public int getStock() {
-		return stock;
-	}
+        return stock;
+    }
 
-	public void setStock(int stock) {
-		this.stock = stock;
-	}
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
 
-	public double getDiscount() {
-		return discount;
-	}
+    public double getDiscount() {
+        return discount;
+    }
 
-	public void setDiscount(double discount) {
-		this.discount = discount;
-	}
+    public void setDiscount(double discount) {
+        this.discount = discount;
+    }
 
-	@Override
-	public String toString() {
-		return "Product [id=" + id + ", name=" + name + ", category=" + category + ", brand=" + brand + ", price="
-				+ price + ", image=" + image + ", stock=" + stock + ", discount=" + discount + "]";
-	}
-    
+    @Override
+    public String toString() {
+        return "Product [id=" + id + ", name=" + name + ", category=" + category + ", brand=" + brand + ", price="
+                + price + ", image=" + image + ", stock=" + stock + ", discount=" + discount + "]";
+    }
+
 }

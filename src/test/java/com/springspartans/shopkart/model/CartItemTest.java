@@ -1,5 +1,6 @@
 package com.springspartans.shopkart.model;
 
+import com.springspartans.shopkart.cart.domain.CartItem;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.AfterEach;
