@@ -70,3 +70,27 @@ El sistema está compuesto por los siguientes módulos principales que agrupan l
 - **Modelos**: `CartItem`
 
 ---
+
+## Falta implementar
+
+Falta implementar los siguientes aspectos:
+
+### Migración a DDD y Arquitectura Limpia
+
+Los siguientes módulos aún no han sido migrados a la nueva arquitectura y mantienen su estructura original:
+
+- **Customer**
+- **Order**
+- **Admin**
+
+### Documentación y estandarización de Servicios REST
+
+Falta documentar e implementar los servicios REST bajo el mismo formato para los siguientes módulos:
+
+- **Customer**
+- **Order**
+- **Admin**
+
+### Pruebas de Seguridad y Rendimiento
+
+Se realizaron pruebas de seguridad y rendimiento de manera manual en una versión pasada del proyecto , sin embargo, actualmente estas no se encuentran automatizadas ni implementadas dentro de un pipeline de integración continua.
