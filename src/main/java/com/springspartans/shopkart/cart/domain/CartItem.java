@@ -1,4 +1,4 @@
-package com.springspartans.shopkart.model;
+package com.springspartans.shopkart.cart.domain;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -14,28 +14,31 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import com.springspartans.shopkart.model.Customer;
+import com.springspartans.shopkart.model.Product;
+
 @Entity
 @Table(name = "cart_item")
 public class CartItem {
-	
+
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int slno;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "cust_id", nullable = false, foreignKey = @ForeignKey(name = "FK_Customer"))
-    private Customer customer;
-	
+	@JoinColumn(name = "cust_id", nullable = false, foreignKey = @ForeignKey(name = "FK_Customer"))
+	private Customer customer;
+
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "prod_id", nullable = false, foreignKey = @ForeignKey(name = "FK_Product"))
-    private Product product;
-	
+	@JoinColumn(name = "prod_id", nullable = false, foreignKey = @ForeignKey(name = "FK_Product"))
+	private Product product;
+
 	@Column(nullable = false)
 	private int quantity;
-	
+
 	@Column(nullable = false)
 	private Timestamp addedDate = Timestamp.from(Instant.now());
-	
+
 	public CartItem() {
 	}
 
@@ -63,6 +66,7 @@ public class CartItem {
 	public void setSlno(int slno) {
 		this.slno = slno;
 	}
+
 	public Customer getCustomer() {
 		return customer;
 	}

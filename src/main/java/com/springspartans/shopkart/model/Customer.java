@@ -1,5 +1,7 @@
 package com.springspartans.shopkart.model;
 
+import com.springspartans.shopkart.cart.domain.CartItem;
+
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -126,7 +128,7 @@ public class Customer {
 
     public void setId(int id) {
         this.id = id;
-    }   
+    }
 
     public String getName() {
         return name;

@@ -15,9 +15,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.TestPropertySource;
 
-import com.springspartans.shopkart.model.CartItem;
 import com.springspartans.shopkart.model.Customer;
 import com.springspartans.shopkart.model.Product;
+import com.springspartans.shopkart.cart.domain.CartItem;
+import com.springspartans.shopkart.cart.infrastructure.CartItemRepository;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.ANY)

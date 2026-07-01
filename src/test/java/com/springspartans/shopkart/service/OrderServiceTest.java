@@ -1,6 +1,7 @@
 package com.springspartans.shopkart.service;
 
-import com.springspartans.shopkart.model.CartItem;
+import com.springspartans.shopkart.cart.domain.CartItem;
+import com.springspartans.shopkart.cart.application.CartItemService;
 import com.springspartans.shopkart.model.Customer;
 import com.springspartans.shopkart.model.Order;
 import com.springspartans.shopkart.model.Order.OrderStatus;
@@ -51,7 +52,7 @@ public class OrderServiceTest {
         product.setName("Laptop");
         product.setPrice(1000.0);
         product.setStock(10);
-        product.setBrand("Asus"); 
+        product.setBrand("Asus");
 
         order = new Order();
         order.setId(100);
