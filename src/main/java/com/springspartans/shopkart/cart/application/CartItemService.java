@@ -1,15 +1,17 @@
-package com.springspartans.shopkart.service;
+package com.springspartans.shopkart.cart.application;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.springspartans.shopkart.model.CartItem;
+import com.springspartans.shopkart.cart.domain.CartItem;
 import com.springspartans.shopkart.model.Customer;
 import com.springspartans.shopkart.model.Product;
-import com.springspartans.shopkart.repository.CartItemRepository;
+import com.springspartans.shopkart.cart.infrastructure.CartItemRepository;
 import com.springspartans.shopkart.repository.ProductRepository;
+import com.springspartans.shopkart.service.CustomerService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +69,7 @@ public class CartItemService {
 	public void deleteCartItem(int itemId) {
 		CartItem item = cartRepo.findById(itemId).orElse(null);
 		if (item != null) {
-			item.getProduct().setStock(item.getProduct().getStock()+item.getQuantity());
+			item.getProduct().setStock(item.getProduct().getStock() + item.getQuantity());
 			cartRepo.deleteById(itemId);
 		}
 	}
@@ -89,7 +91,7 @@ public class CartItemService {
 		Product prod;
 		for (CartItem item : list) {
 			prod = item.getProduct();
-			total += prod.getPrice() * (100 - prod.getDiscount())/100.0 * item.getQuantity();
+			total += prod.getPrice() * (100 - prod.getDiscount()) / 100.0 * item.getQuantity();
 		}
 		return total;
 	}
@@ -100,9 +102,8 @@ public class CartItemService {
 			logger.warn("Product not found for id: {}", itemId);
 			return;
 		}
-		if (prod.getStock() > 0) 
-		{
-			prod.setStock(prod.getStock()-1);
+		if (prod.getStock() > 0) {
+			prod.setStock(prod.getStock() - 1);
 			CartItem item = new CartItem();
 			item.setCustomer(cust);
 			item.setProduct(prod);
@@ -110,10 +111,10 @@ public class CartItemService {
 			cartRepo.save(item);
 		}
 	}
-	public void clearCart()
-	{
+
+	public void clearCart() {
 		List<CartItem> items = cartRepo.findByCustId(custId);
-		for(CartItem item:items)
+		for (CartItem item : items)
 			deleteCartItem(item.getSlno());
 	}
 
